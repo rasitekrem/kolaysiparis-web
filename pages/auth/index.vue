@@ -1,0 +1,66 @@
+<template>
+    <div class="container">
+        <div class="row  mt-5">
+            <div class="col-md-4 offset-4 card card-primary p-3 border" :class="{'border-primary' : isUser, 'border-success' : !isUser }">
+                <h3 :class="{'text-primary' : isUser, 'text-success' : !isUser }" class="text-center mb-3 mt-3">Kolay Sipariş | {{ isUser ? 'Giriş' : 'Kayıt' }}</h3>
+                <hr>
+                <form @submit.prevent="onSubmit">
+                    <div v-if="!isUser" class="form-group">
+                        <label>Restoran Adı</label>
+                        <input v-model="user.restoranName" type="text" class="form-control" placeholder="Restoran Adınız...">
+                    </div>
+                    <div class="form-group">
+                        <label>E-posta Adresiniz</label>
+                        <input v-model="user.email" type="email" class="form-control" placeholder="E-posta adresinizi giriniz">
+                    </div>
+                    <div class="form-group">
+                        <label>Şifre</label>
+                        <input v-model="user.password" type="password" class="form-control" placeholder="Şifreniz...">
+                    </div>
+                    <div class="form-group" v-if="!isUser" >
+                        <label>Şifre</label>
+                        <input v-model="user.passwordAgain" type="password" class="form-control" placeholder="Yeniden Şifreniz...">
+                    </div>
+                    <div class="button-container d-flex  flex-column align-items-center">
+                        <button type="submit" :class="{'btn-primary' : isUser, 'btn-success' : !isUser }" class="btn btn-block mb-2">
+                                {{ isUser ? 'Giriş Yap' : 'Kayıt Ol' }}
+                            </button>
+                        <a href="#" @click.prevent="isUser=!isUser" class="text-secondary">
+                                {{ isUser ? 'Üye değilim' : 'Üyeliğim var'}}
+                            </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        layout: 'auth',
+        data() {
+            return {
+                user: {
+                    email: null,
+                    password: null
+                },
+                isUser: false
+            }
+        },
+        methods: {
+            onSubmit() {
+                // this.$store.dispatch("authUser", {
+                //     isUser: this.isUser,
+                //     user: this.user
+                // }).then(response => {
+                //     this.$router.push("/")
+                // })
+                console.log(this.user)
+            }
+        }
+    }
+</script>
+
+<style scoped>
+    
+</style>
