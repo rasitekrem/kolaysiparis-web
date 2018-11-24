@@ -1,4 +1,5 @@
 import Vuex from 'vuex';
+import axios from 'axios'
 
 const createStore = () => {
     return new Vuex.Store({
@@ -6,7 +7,7 @@ const createStore = () => {
         mutations: {},
         actions: {
             nuxtServerInit(vuexContext,context){
-                context.$axios.get("/test")
+                axios.get("http://localhost:3000/api/")
                     .then(response => {
                         console.log(response)
                     })
