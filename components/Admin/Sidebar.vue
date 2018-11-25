@@ -2,67 +2,61 @@
   <nav class="col-md-2 d-none d-md-block bg-light sidebar">
     <div class="sidebar-sticky">
       <ul class="nav flex-column border-bottom">
-        <li class="nav-item border-bottom">
-          <a class="nav-link active" href="#">
+        <nuxt-link class="nav-item border-bottom" active-class="active" to="/" tag="li"> 
+          <a class="nav-link ">
             <fa class="mr-2" :icon="['fas', 'home']" /> Anasayfa
           </a>
-        </li>
+        </nuxt-link>
         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
           <span>Restoran</span>
-          <a class="d-flex align-items-center text-muted" href="#">
-            <fa class="mr-2" :icon="['fas', 'wallet']" />
-          </a>
         </h6>
-        <nuxt-link tag="li" to="/auth" active-class="active" class="nav-item ml-2">
-          <a class="nav-link" href="#">
+        <nuxt-link tag="li" to="/orders" active-class="active" class="nav-item ml-2">
+          <a class="nav-link">
             <fa class="mr-2" :icon="['fas', 'bell']" /> Siparişler
           </a>
         </nuxt-link>
-  
-        <li class="nav-item ml-2">
-          <a class="nav-link" href="#">
+        <nuxt-link tag="li" to="/cashier" active-class="active" class="nav-item ml-2">
+          <a class="nav-link">
             <fa class="mr-2" :icon="['fas', 'calculator']" /> Kasa
           </a>
-        </li>
-        <li class="nav-item ml-2">
-          <a class="nav-link" href="#">
-            <fa class="mr-2" :icon="['fas', 'wallet']" /> Gün
+        </nuxt-link>
+
+        <nuxt-link tag="li" to="/day-report" active-class="active" class="nav-item ml-2">
+          <a class="nav-link">
+            <fa class="mr-2" :icon="['fas', 'calendar-alt']" /> Gün
           </a>
-        </li>
+        </nuxt-link>
       </ul>
       <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
         <span>Yönetim</span>
-        <a class="d-flex align-items-center text-muted" href="#">
-          <fa class="mr-2" :icon="['fas', 'wallet']" />
-        </a>
       </h6>
       <ul class="nav flex-column mb-2">
-        <li class="nav-item ml-2">
+        <nuxt-link tag="li" to="/raporlar" active-class="active" class="nav-item ml-2">
           <a class="nav-link" href="#">
             <fa class="mr-2" :icon="['fas', 'chart-line']" /> Raporlar
           </a>
-        </li>
-        <li class="nav-item ml-2">
-          <a class="nav-link" href="#">
-            <fa class="mr-2" :icon="['fas', 'wallet']" /> Personel
+        </nuxt-link>
+        <nuxt-link tag="li" to="/personal" active-class="active" class="nav-item ml-2">
+          <a class="nav-link">
+            <fa class="mr-2" :icon="['fas', 'users']" /> Personel
           </a>
-        </li>
-        <li class="nav-item ml-2">
-          <a class="nav-link" href="#">
-            <fa class="mr-2" :icon="['fas', 'wallet']" /> Menu
+        </nuxt-link>
+        <nuxt-link tag="li" to="/menu" active-class="active" class="nav-item ml-2">
+          <a class="nav-link">
+            <fa class="mr-2" :icon="['fas', 'book']" /> Menu
           </a>
-        </li>
-        <li class="nav-item ml-2">
-          <a class="nav-link" href="#">
-            <fa class="mr-2" :icon="['fas', 'wallet']" /> Masa
+        </nuxt-link>
+        <nuxt-link tag="li" to="/masa" active-class="active" class="nav-item ml-2">
+          <a class="nav-link">
+            <fa class="mr-2" :icon="['fas', 'table']" /> Masa
           </a>
-        </li>
-        <li class="nav-item ml-2">
-          <a class="nav-link" href="#">
+        </nuxt-link>
+        <nuxt-link tag="li" to="/ayarlar" active-class="active" class="nav-item ml-2">
+          <a class="nav-link">
             <fa class="mr-2" :icon="['fas', 'wrench']" /> Hesap Ayarları
           </a>
-        </li>
+        </nuxt-link>
       </ul>
     </div>
-  </nav>
+  </nav> 
 </template>

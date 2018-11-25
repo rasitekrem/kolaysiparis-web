@@ -3,18 +3,25 @@ import axios from 'axios'
 
 const createStore = () => {
     return new Vuex.Store({
-        state: {},
+        state: {
+            authToken: null,
+
+        },
         mutations: {},
         actions: {
             nuxtServerInit(vuexContext,context){
-                axios.get("http://localhost:3000/api/")
-                    .then(response => {
-                        console.log(response)
-                    })
-                    .catch(err => console.log(err))
+                // axios.get("/")
+                //     .then(response => {
+                //         console.log(response)
+                //     })
+                //     .catch(err => console.log(err))
             }
         },
-        getters: {}
+        getters: {
+            getToken(store) {
+                return store.authToken
+            }
+        }
     })
 }
 

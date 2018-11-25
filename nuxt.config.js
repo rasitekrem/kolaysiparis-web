@@ -57,10 +57,10 @@ module.exports = {
   /*
   ** Axios module configuration
   */
-  // axios: {
-  //   // See https://github.com/nuxt-community/axios-module#options
-  //   baseURL: "http://localhost:3000/api"
-  // },
+  axios: {
+    // See https://github.com/nuxt-community/axios-module#options
+    baseURL: "http://localhost:3000/api"
+  },
 
   /*
   ** Build configuration
@@ -75,6 +75,7 @@ module.exports = {
   },
   serverMiddleware: [
     "~/api",
-    bodyParser.json()
+    bodyParser.json(),
+    bodyParser.urlencoded({extended: false})
   ]
 }

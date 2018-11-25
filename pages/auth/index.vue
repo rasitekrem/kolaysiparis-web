@@ -49,12 +49,12 @@
         },
         methods: {
             onSubmit() {
-                // this.$store.dispatch("authUser", {
-                //     isUser: this.isUser,
-                //     user: this.user
-                // }).then(response => {
-                //     this.$router.push("/")
-                // })
+                this.$store.dispatch("authUser", {
+                    isUser: this.isUser,
+                    user: this.user
+                }).then(response => {
+                    this.$router.push("/")
+                })
                 console.log(this.user)
             }
         }
