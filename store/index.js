@@ -5,16 +5,15 @@ const createStore = () => {
     return new Vuex.Store({
         state: {
             authToken: null,
-
         },
         mutations: {},
         actions: {
             nuxtServerInit(vuexContext,context){
-                // axios.get("/")
-                //     .then(response => {
-                //         console.log(response)
-                //     })
-                //     .catch(err => console.log(err))
+                context.$axios.post('register',{ username: 'testet', password: '12341'})
+                    .then(response => {
+                        console.log(response)
+                    })
+                    .catch(err => console.log(err))
             }
         },
         getters: {
