@@ -1,5 +1,4 @@
 import Vuex from 'vuex';
-import axios from 'axios'
 
 const createStore = () => {
     return new Vuex.Store({
@@ -9,11 +8,11 @@ const createStore = () => {
         mutations: {},
         actions: {
             nuxtServerInit(vuexContext,context){
-                context.$axios.post('register',{ username: 'testet', password: '12341'})
-                    .then(response => {
-                        console.log(response)
-                    })
-                    .catch(err => console.log(err))
+                // context.$axios.post('register',{ username: 'testet', password: '12341'})
+                //     .then(response => {
+                //         console.log(response)
+                //     })
+                //     .catch(err => console.log(err))
             }
         },
         getters: {
