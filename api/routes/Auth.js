@@ -1,61 +1,82 @@
-const config = require('../config/database');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const User = require("../models/user");
+const bcrypt = require('bcrypt')
+const User = require("../models/userModel");
 
-router.post('/signup', function(req, res) {
-    // if (!req.body.username || !req.body.password) {
-    //   res.json({success: false, msg: 'Please pass username and password.'});
-    // } else {
-    //   var newUser = new User({
-    //     username: req.body.username,
-    //     password: req.body.password
-    //   });
-    //   // save the user
-    //   newUser.save(function(err) {
-    //     if (err) {
-    //       return res.json({success: false, msg: 'Username already exists.'});
-    //     }
-    //     res.json({success: true, msg: 'Successful created new user.'});
-    //   });
-    // }
-  });
-
-  router.post('/signin', function(req, res) {
-    User.findOne({
-      username: req.body.username
-    }, function(err, user) {
-      if (err) throw err;
-  
-      if (!user) {
-        res.status(401).send({success: false, msg: 'Authentication failed. User not found.'});
-      } else {
-        // check if password matches
-        user.comparePassword(req.body.password, function (err, isMatch) {
-          if (isMatch && !err) {
-            // if user is found and password is right create a token
-            var token = jwt.sign(user, config.secret);
-            // return the information including token as JSON
-            res.json({success: true, token: 'JWT ' + token});
-          } else {
-            res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
-          }
-        });
-      }
+router.post('/register', (req, res) => {
+  const {
+    username,
+    password
+  } = req.body;
+  bcrypt.hash(password, 10).then((hash) => {
+    const user = new User({
+      username,
+      password: hash
     });
-  });
 
-  getToken = function (headers) {
-    if (headers && headers.authorization) {
-      var parted = headers.authorization.split(' ');
-      if (parted.length === 2) {
-        return parted[1];
-      } else {
-        return null;
-      }
-    } else {
-      return null;
+    const promise = user.save();
+    promise.then((data) => {
+      res.json(data);
+    }).catch((err) => {
+      res.json(err)
+    })
+  })
+});
+
+router.post('/authenticate', (req, res) => {
+  const {
+    username,
+    password
+  } = req.body;
+  User.findOne({
+    username
+  }, (err, user) => {
+    if (err) {
+      throw err;
     }
-  };
-  module.exports = router;
+    if (!user) {
+      res.json({
+        status: false,
+        message: "Authentication failed,user not found!"
+      })
+    } else {
+      bcrypt.compare(password, user.password).then((result) => {
+        if (!result) {
+          res.json({
+            status: false,
+            message: "Authentication failed, wrong password"
+          })
+        } else {
+          const payload = {
+            username
+          }
+          const token = jwt.sign(payload, req.app.get('api_secret_key'), {
+            expiresIn: 720
+          })
+          res.json({
+            status: true,
+            token
+          })
+        }
+      })
+    }
+  })
+});
+
+
+router.post('/checkuser',(req,res) => {
+    
+    User.find({ username: req.body.data.email })
+      .then(user => {
+        console.log(user.length)
+        if (user.length == 0) {
+          res.status(200).json({ status : 'ok'});
+        } else {
+          res.status(200).json({ status : 'error'})
+        }
+        
+      })
+});
+
+module.exports = router;

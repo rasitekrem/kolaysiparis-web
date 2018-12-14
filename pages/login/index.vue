@@ -1,14 +1,10 @@
 <template>
     <div class="container">
         <div class="row  mt-5">
-            <div class="col-md-4 offset-4 card card-primary p-3 border" :class="{'border-primary' : isUser, 'border-success' : !isUser }">
-                <h3 :class="{'text-primary' : isUser, 'text-success' : !isUser }" class="text-center mb-3 mt-3">Kolay Sipariş | {{ isUser ? 'Giriş' : 'Kayıt' }}</h3>
+            <div class="col-md-4 offset-4 card card-primary p-3 border border-primary">
+                <h3 class="text-primary text-center mb-3 mt-3">Kolay Sipariş | Giriş</h3>
                 <hr>
                 <form @submit.prevent="onSubmit">
-                    <div v-if="!isUser" class="form-group">
-                        <label>Restoran Adı</label>
-                        <input v-model="user.restaurantName" type="text" class="form-control" placeholder="Restoran Adınız...">
-                    </div>
                     <div class="form-group">
                         <label>E-posta Adresiniz</label>
                         <input v-model="user.email" type="email" class="form-control" placeholder="E-posta adresinizi giriniz">
@@ -17,16 +13,12 @@
                         <label>Şifre</label>
                         <input v-model="user.password" type="password" class="form-control" placeholder="Şifreniz...">
                     </div>
-                    <div class="form-group" v-if="!isUser" >
-                        <label>Şifre</label>
-                        <input v-model="user.repassword" type="password" class="form-control" placeholder="Yeniden Şifreniz...">
-                    </div>
                     <div class="button-container d-flex  flex-column align-items-center">
-                        <button type="submit" :class="{'btn-primary' : isUser, 'btn-success' : !isUser }" class="btn btn-block mb-2">
-                                {{ isUser ? 'Giriş Yap' : 'Kayıt Ol' }}
+                        <button type="submit" class="btn btn-block mb-2 btn-primary">
+                                Giriş Yap
                             </button>
-                        <a href="#" @click.prevent="isUser=!isUser" class="text-secondary">
-                                {{ isUser ? 'Üye değilim' : 'Üyeliğim var'}}
+                        <a href="#" @click.prevent="$router.push('/register')" class="text-secondary">
+                                Üye değilim
                             </a>
                     </div>
                 </form>
@@ -43,17 +35,13 @@
             return {
                 user: {
                     email: null,
-                    password: null,
-                    repassword: null,
-
-                },
-                isUser: false
+                    password: null
+                }
             }
         },
         methods: {
             onSubmit() {
-                this.$store.dispatch("authUser", {
-                    isUser: this.isUser,
+                this.$store.dispatch("login", {
                     user: this.user
                 }).then(response => {
                     this.$router.push("/")
