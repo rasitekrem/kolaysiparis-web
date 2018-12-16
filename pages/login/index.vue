@@ -7,19 +7,26 @@
                 <form @submit.prevent="onSubmit">
                     <div class="form-group">
                         <label>E-posta Adresiniz</label>
-                        <input v-model="user.email" type="email" class="form-control" placeholder="E-posta adresinizi giriniz">
+                        <input @blur="$v.user.email.$touch()" v-model="user.email" :class="{ 'is-invalid' : $v.user.email.$error }" type="email" class="form-control" placeholder="E-posta adresinizi giriniz">
+                        <small class="form-text text-danger" v-if="!$v.user.email.required && $v.user.email.$error">Bu alan zorunludur..</small>
+                        <small class="form-text text-danger" v-if="!$v.user.email.email && $v.user.email.$error">Lütfen geçerli bir eposta giriniz..</small>
                     </div>
                     <div class="form-group">
                         <label>Şifre</label>
-                        <input v-model="user.password" type="password" class="form-control" placeholder="Şifreniz...">
+                        <input @blur="$v.user.password.$touch()" v-model="user.password" type="password" class="form-control" placeholder="Şifreniz...">
+                        <small class="form-text text-danger" v-if="!$v.user.password.required && $v.user.password.$error">Bu alan zorunludur..</small>
                     </div>
                     <div class="button-container d-flex  flex-column align-items-center">
-                        <button type="submit" class="btn btn-block mb-2 btn-primary">
-                                Giriş Yap
-                            </button>
+                        <button type="submit" class="btn btn-block mb-2 btn-primary" :disabled="$v.$invalid">
+                                    Giriş Yap
+                                </button>
                         <a href="#" @click.prevent="$router.push('/register')" class="text-secondary">
-                                Üye değilim
-                            </a>
+                                    Üye değilim
+                                </a>
+                    </div>
+                    <div class="alert alert-dismissible alert-danger col-sm-8 offset-2" v-if="errorMessage">
+                        <button type="button" class="close" @click.prevent="errorMessage = null" data-dismiss="alert">&times;</button>
+                        <small class="form-text">{{ errorMessage }}</small>
                     </div>
                 </form>
             </div>
@@ -28,7 +35,10 @@
 </template>
 
 <script>
-    import {required} from 'vuelidate/lib/validators';
+    import {
+        required,
+        email
+    } from 'vuelidate/lib/validators';
     export default {
         layout: 'auth',
         data() {
@@ -36,7 +46,8 @@
                 user: {
                     email: null,
                     password: null
-                }
+                },
+                errorMessage: null
             }
         },
         methods: {
@@ -44,13 +55,25 @@
                 this.$store.dispatch("login", {
                     user: this.user
                 }).then(response => {
-                    this.$router.push("/")
+                    console.log(response)
+                    if (response.data.status) {
+                        this.$router.push("/")
+                    } else {
+                        this.errorMessage = response.data.message
+                    }
                 })
-                console.log(this.user)
             }
         },
         validations: {
-            
+            user: {
+                email: {
+                    required,
+                    email
+                },
+                password: {
+                    required
+                }
+            }
         }
     }
 </script>

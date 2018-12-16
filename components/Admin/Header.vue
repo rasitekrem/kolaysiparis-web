@@ -6,14 +6,19 @@
     </div>
     <ul class="navbar-nav my-2 my-lg-0 px-3">
       <li class="nav-item text-nowrap">  
-        <a class="nav-link" href="#">Çıkış Yap</a>
+        <a class="nav-link" href="#" @click.prevent="logout()">Çıkış Yap</a>
       </li>
     </ul>
   </nav>
 </template>
 <script>
   export default {
-   
+    methods: {
+      logout(){
+        this.$store.dispatch('logout');
+        this.$router.push('/login');
+      }
+    }
   }
 </script>
 <style>

@@ -10,7 +10,11 @@ var UserSchema = new Schema({
   password: {
         type: String,
         required: true,
-        minlength: 5
+        minlength: 6
+    },
+    restaurantName: {
+        type: String,
+        required: true
     }
 });
 

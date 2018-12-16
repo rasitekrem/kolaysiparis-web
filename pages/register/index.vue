@@ -40,6 +40,10 @@
                                     Üyeliğim var
                                 </a>
                     </div>
+                    <div class="alert alert-dismissible alert-danger col-sm-8 offset-2" v-if="errorMessage">
+                        <button type="button" class="close" @click.prevent="errorMessage = null" data-dismiss="alert">&times;</button>
+                        <small class="form-text">{{ errorMessage }}</small>
+                    </div>
                 </form>
             </div>
         </div>
@@ -67,7 +71,8 @@
                     password: null,
                     repassword: null,
                     restaurantName: null
-                }
+                },
+                errorMessage: null
             }
         },
         methods: {
@@ -75,9 +80,13 @@
                 this.$store.dispatch("register", {
                     user: this.user
                 }).then(response => {
-                    this.$router.push("/")
+                    console.log(response)
+                    if (response.data.status) {
+                        this.$router.push("/")
+                    } else {
+                        this.errorMessage = response.data.message
+                    }
                 })
-                console.log(this.user)
             }
         },
         validations: {

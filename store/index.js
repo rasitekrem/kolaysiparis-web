@@ -54,27 +54,41 @@ const createStore = () => {
                 }
                 vuexContext.commit("setAuthKey",token)
             },
-            authUser(vuexContext,authData) {
-                let authLink = "/register";
-                if (authData.isUser) {
-                  authLink = "/authenticate"
-                  return this.$axios.post(authLink, 
-                    { email: authData.user.email, password: authData.user.password })
+            login(vuexContext,authData) {
+                  return this.$axios.post('/authenticate', 
+                    { username: authData.user.email, password: authData.user.password })
                       .then(response => {
-                        Cookie.set("authKey", response.data.idToken);
-                        vuexContext.commit("setAuthKey",response.data.idToken)
+                          if (response.data.status) {
+                            Cookie.set("authKey", response.data.token);
+                            let expiresIn = new Date().getTime() + +response.data.expiresIn * 60000
+                            Cookie.set("expiresIn",expiresIn);
+                            localStorage.setItem("authKey",response.data.token);
+                            localStorage.setItem("expiresIn",expiresIn);
+                            vuexContext.commit("setAuthKey",response.data.token)
+                          }
+                        return response;
                       })
-                } 
-                return this.$axios.post(authLink, 
+            },
+            register(vuexContext,authData) {
+                return this.$axios.post('/register', 
                     { 
-                        email: authData.user.email, 
+                        username: authData.user.email, 
                         password: authData.user.password,
+                        repassword: authData.user.repassword,
                         restaurantName: authData.user.restaurantName 
                     })
                       .then(response => {
-                        Cookie.set("authKey", response.data.idToken);
-                        vuexContext.commit("setAuthKey",response.data.idToken)
-                      })  
+                          
+                          if (response.data.status) {
+                            Cookie.set("authKey", response.data.token);
+                            let expiresIn = new Date().getTime() + +response.data.expiresIn * 60000
+                            Cookie.set("expiresIn",expiresIn);
+                            localStorage.setItem("authKey",response.data.token);
+                            localStorage.setItem("expiresIn",expiresIn);
+                            vuexContext.commit("setAuthKey",response.data.token)
+                          }
+                        return response
+                      }) 
             },
             logout(vuexContext){
                 return vuexContext.commit("clearAuthKey")
