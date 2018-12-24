@@ -74,8 +74,7 @@ const createStore = () => {
                     { 
                         username: authData.user.email, 
                         password: authData.user.password,
-                        repassword: authData.user.repassword,
-                        restaurantName: authData.user.restaurantName 
+                        repassword: authData.user.repassword
                     })
                       .then(response => {
                           
@@ -98,6 +97,13 @@ const createStore = () => {
                 
                 return this.$axios.post('/checkuser',{ data: { email: data.email } })
                     .then(response => {
+                        return response
+                    })
+            },
+            saveStepOne(vuexContext,post) {
+                return this.$axios.post('/admin/saverestaurant',{ data: { post, token: vuexContext.state.authKey } })
+                    .then(response => {
+                        console.log(response)
                         return response
                     })
             }

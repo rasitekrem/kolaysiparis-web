@@ -19,13 +19,13 @@ router.post('/register', (req, res) => {
     const user = new User({
       username,
       password: hash,
-      restaurantName
+      restaurantId: 'none',
     });
-    console.log(user)
     const promise = user.save();
     promise.then((data) => {
+      console.log(data)
       const payload = {
-        username
+        id: data._id
       }
       const token = jwt.sign(payload, req.app.get('api_secret_key'), {
         expiresIn: 43200

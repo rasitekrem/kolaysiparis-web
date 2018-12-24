@@ -5,11 +5,11 @@
                 <h3 class="text-success text-center mb-3 mt-3">Kolay Sipariş | Kayıt</h3>
                 <hr>
                 <form @submit.prevent="onSubmit">
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label>Restoran Adı</label>
                         <input @blur="$v.user.restaurantName.$touch()" v-model="user.restaurantName" type="text" class="form-control" :class="{ 'is-invalid' : $v.user.restaurantName.$error }" placeholder="Restoran Adınız...">
                         <small class="form-text text-danger" v-if="!$v.user.restaurantName.required && $v.user.restaurantName.$error">Bu alan zorunludur..</small>
-                    </div>
+                    </div> -->
                     <div class="form-group">
                         <label>E-posta Adresiniz</label>
                         <input @blur="$v.user.email.$touch()" v-model="user.email" type="email" class="form-control" :class="{ 'is-invalid' : $v.user.email.$error }" placeholder="E-posta adresinizi giriniz">
@@ -69,8 +69,7 @@
                 user: {
                     email: null,
                     password: null,
-                    repassword: null,
-                    restaurantName: null
+                    repassword: null
                 },
                 errorMessage: null
             }
@@ -82,7 +81,7 @@
                 }).then(response => {
                     console.log(response)
                     if (response.data.status) {
-                        this.$router.push("/")
+                        this.$router.push("/options")
                     } else {
                         this.errorMessage = response.data.message
                     }
@@ -111,9 +110,6 @@
                         }
                         
                     }
-                },
-                restaurantName: {
-                    required
                 },
                 password: {
                     required,
