@@ -17,11 +17,6 @@
             StepTwo,
             StepThree
         },
-        data() {
-            return {
-                step: 1
-            }
-        },
         methods : {
             saveStepOne(post) {
                 this.$store.dispatch("saveStepOne",post)
@@ -30,6 +25,12 @@
                             this.step++;
                         }
                     })
+            }
+        },
+        computed: {
+            step() {
+                this.$store.dispatch("checkRestaurantStep")
+                return this.$store.getters.getStep
             }
         }
     }

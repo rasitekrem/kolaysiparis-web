@@ -57,7 +57,12 @@
                 }).then(response => {
                     console.log(response)
                     if (response.data.status) {
-                        this.$router.push("/")
+                        if(this.$store.getters.getStep > 3) {
+                            this.$router.push("/")
+                        } else {
+                            this.$router.push("/options")
+                        }
+                        
                     } else {
                         this.errorMessage = response.data.message
                     }

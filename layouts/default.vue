@@ -16,7 +16,7 @@
   import Header from '@/components/Admin/Header'
   import Sidebar from '@/components/Admin/Sidebar'
   export default {
-    middleware: ["session-control","auth"],
+    middleware: ["session-control","auth","step"],
     components: {
       Sidebar,
       Header,

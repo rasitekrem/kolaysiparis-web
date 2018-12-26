@@ -8,7 +8,7 @@
 <script>
     import Header from '@/components/Admin/Header';
     export default {
-    middleware: ["session-control","auth"],
+    middleware: ["session-control","auth","checkstep"],
     components: {
       Header,
     }

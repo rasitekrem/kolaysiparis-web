@@ -6,7 +6,8 @@ const createStore = () => {
         state: {
             authKey: null,
             orders: [],
-            tables: []
+            tables: [],
+            step: null
         },
         mutations: {
             setAuthKey(state,authKey) {
@@ -20,11 +21,14 @@ const createStore = () => {
                  localStorage.removeItem("expiresIn")
                 }
                 state.authKey = null;
+            },
+            setStep(state,step) {
+                state.step = step;
             }
         },
         actions: {
             nuxtServerInit(vuexContext,context){
-               
+
             },
             initAuth(vuexContext, req) {
                 let token;
@@ -53,6 +57,7 @@ const createStore = () => {
                     vuexContext.commit("clearAuthKey")
                 }
                 vuexContext.commit("setAuthKey",token)
+                vuexContext.dispatch("checkRestaurantStep")
             },
             login(vuexContext,authData) {
                   return this.$axios.post('/authenticate', 
@@ -65,6 +70,7 @@ const createStore = () => {
                             localStorage.setItem("authKey",response.data.token);
                             localStorage.setItem("expiresIn",expiresIn);
                             vuexContext.commit("setAuthKey",response.data.token)
+                            //vuexContext.dispatch("checkRestaurantStep")
                           }
                         return response;
                       })
@@ -93,8 +99,6 @@ const createStore = () => {
                 return vuexContext.commit("clearAuthKey")
             },
             checkUser(vuexContext,data) {
-                console.log(data.email);
-                
                 return this.$axios.post('/checkuser',{ data: { email: data.email } })
                     .then(response => {
                         return response
@@ -103,8 +107,17 @@ const createStore = () => {
             saveStepOne(vuexContext,post) {
                 return this.$axios.post('/admin/saverestaurant',{ data: { post, token: vuexContext.state.authKey } })
                     .then(response => {
-                        console.log(response)
+                        if (response.status) {
+                            vuexContext.state.step = 2;
+                        }
                         return response
+                    })
+            },
+            checkRestaurantStep(vuexContext){
+                //console.log(id + "check")
+                return this.$axios.post("/admin/checkstatus",{ data: { token: vuexContext.state.authKey }})
+                    .then(response => {
+                        vuexContext.commit("setStep",response.data.step)                       
                     })
             }
         },
@@ -114,6 +127,12 @@ const createStore = () => {
             },
             getToken(store) {
                 return store.authKey
+            },
+            getRestaurantStatus(state){
+                return state.step <= 3;
+            },
+            getStep(state) {
+                return state.step
             }
         }
     })

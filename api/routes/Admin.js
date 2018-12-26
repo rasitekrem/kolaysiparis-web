@@ -3,8 +3,6 @@ const router = express.Router();
 const Restaurant = require("../models/restaurantModel");
 const verifyToken = require('../middleware/verifytoken')
 router.post('/saverestaurant',(req,res) => {
-    console.log(req.body.data)
-    console.log(req.decode)
     const {
         restaurantName,
         address,
@@ -18,7 +16,7 @@ router.post('/saverestaurant',(req,res) => {
         county,
         city,
         adminId : req.decode.id,
-        step: 2
+        step : 2
     });
     const promise = restaurant.save();
     promise.then((data) => {
@@ -29,5 +27,15 @@ router.post('/saverestaurant',(req,res) => {
         res.json({ status: false, message: err.message})
       })
     
+})
+router.post('/checkstatus', (req,res) => {
+    Restaurant.findOne({adminId : req.decode.id})
+        .then(restaurant => {
+            if (restaurant) {
+                res.json({ step : restaurant.step })
+            } else {
+                res.json({ step: 1})
+            }
+        })
 })
 module.exports = router;
