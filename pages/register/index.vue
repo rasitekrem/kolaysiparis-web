@@ -47,9 +47,6 @@
                 </form>
             </div>
         </div>
-        <div>
-            {{ $v.user.email }}
-        </div>
     </div>
 </template>
 

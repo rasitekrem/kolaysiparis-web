@@ -1,7 +1,7 @@
 <template>
     <div>
         <StepOne @submitOne="saveStepOne($event)" v-if="step == 1" />
-        <StepTwo v-if="step == 2" />
+        <StepTwo @submitTwo="saveStepTwo($event)" v-if="step == 2" />
         <StepThree v-if="step == 3" />
     </div>
 </template>
