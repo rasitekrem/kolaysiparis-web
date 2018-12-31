@@ -22,7 +22,16 @@
                 this.$store.dispatch("saveStepOne",post)
                     .then(response => {
                         if(response.status) {
-                            this.step++;
+                            //this.step++;
+                        }
+                    })
+            },
+            saveStepTwo(post) {
+                console.log(post)
+                this.$store.dispatch("saveStepTwo",post)
+                    .then(response => {
+                        if(response.status) {
+                            //this.step++;
                         }
                     })
             }

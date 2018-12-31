@@ -38,4 +38,17 @@ router.post('/checkstatus', (req,res) => {
             }
         })
 })
+router.put('/updaterestaurant',(req,res) => {
+    Restaurant.findOne({adminId : req.decode.id})
+        .then(restaurant => {
+            if (restaurant) {
+                console.log(req.body.data)
+                restaurant.tables = req.body.data.post
+                restaurant.step = 3
+                restaurant.save();
+                res.json({ status: true })
+            } 
+        })
+        .catch(err => res.json({ status: false, message: err.message }))
+})
 module.exports = router;

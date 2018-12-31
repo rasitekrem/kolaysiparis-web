@@ -8,7 +8,7 @@
                 <a @click.prevent="tableCount++" class="btn btn-block" v-if="tables.length == tableCount && !this.isInvalid">
                     <fa class="mr-2" :icon="['fas', 'plus']" />
                 </a>
-                <button type="button" class="mr-2 btn btn-success" :disabled="this.isInvalid">Kaydet</button>
+                <button @click.prevent="save" class="mr-2 btn btn-success" :disabled="this.isInvalid">Kaydet</button>
             </div>
         </div>
     </div>
@@ -29,7 +29,6 @@
         },
         methods: {
             add(data) {
-                console.log(data)
                 this.isInvalid = data.invalid
                 this.tables = this.tables.filter(tab => {
                     return data.table.key !== tab.key
@@ -40,7 +39,11 @@
                         return a.key - b.key
                     })
                 }
-                console.log(this.tables)
+            },
+            save(){
+                if (!this.isInvalid) {
+                    this.$emit("submitTwo",this.tables)
+                }
             }
         },
     }

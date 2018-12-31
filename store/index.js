@@ -119,6 +119,15 @@ const createStore = () => {
                     .then(response => {
                         vuexContext.commit("setStep",response.data.step)                       
                     })
+            },
+            saveStepTwo(vuexContext,post){
+                return this.$axios.put("/admin/updaterestaurant",{ data: { post, token: vuexContext.state.authKey }})
+                    .then(response => {
+                        if (response.status) {
+                            vuexContext.state.step = 3;
+                        }
+                        return response;
+                    })
             }
         },
         getters: {
