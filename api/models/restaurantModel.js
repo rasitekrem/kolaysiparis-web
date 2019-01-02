@@ -31,7 +31,7 @@ var RestaurantSchema = new Schema({
     type: Object,
     required: false
   },
-  menu: {
+  categories: {
     type: Object,
     required: false
   }

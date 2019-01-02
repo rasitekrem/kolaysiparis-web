@@ -114,19 +114,36 @@ const createStore = () => {
                     })
             },
             checkRestaurantStep(vuexContext){
-                //console.log(id + "check")
                 return this.$axios.post("/admin/checkstatus",{ data: { token: vuexContext.state.authKey }})
                     .then(response => {
+                        console.log(response)
                         vuexContext.commit("setStep",response.data.step)                       
                     })
             },
             saveStepTwo(vuexContext,post){
-                return this.$axios.put("/admin/updaterestaurant",{ data: { post, token: vuexContext.state.authKey }})
+                return this.$axios.put("/admin/updaterestaurant",{ data: { tables : post, token: vuexContext.state.authKey }})
                     .then(response => {
                         if (response.status) {
                             vuexContext.state.step = 3;
                         }
                         return response;
+                    })
+            },
+            saveStepThree(vuexContext,post){
+                return this.$axios.put("/admin/updaterestaurant",{ data: { categories : post, token: vuexContext.state.authKey }})
+                    .then(response => {
+                        if (response.status) {
+                            vuexContext.state.step = 4;
+                        }
+                        return response;
+                    })
+            },
+            getTables(vuexContext) {
+                return this.$axios.post("/admin/gettables",{ data: { token: vuexContext.state.authKey }})
+                    .then(response => {
+                        console.log(response)
+                        vuexContext.state.tables = response.data.tables
+                        return response
                     })
             }
         },
@@ -142,6 +159,9 @@ const createStore = () => {
             },
             getStep(state) {
                 return state.step
+            },
+            getTables(state) {
+                return state.tables
             }
         }
     })

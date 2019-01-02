@@ -1,7 +1,7 @@
 <template>
     <div @click="clicked" class="card col-sm-2 mx-2 my-2 py-3 text-center" :class="cardClass">
         <div class="card-body">
-            <div class="card-text">Masa {{ index }}</div>
+            <div class="card-text">{{ table }}</div>
         </div>
     </div>
 </template>
@@ -13,7 +13,7 @@
                 alert();
             }
         },
-        props: ['index'],
+        props: ['index','table'],
         computed: {
             cardClass () {
                 let mod = this.index % 4;

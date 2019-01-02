@@ -1,5 +1,8 @@
 export default (context) => {
-    if(context.store.getters.getRestaurantStatus){
-        context.redirect("/options")
-    }
+    context.store.dispatch("checkRestaurantStep")
+        .then(response => {
+            if(context.store.getters.getRestaurantStatus){
+                context.redirect("/options")
+            } 
+        })  
 }

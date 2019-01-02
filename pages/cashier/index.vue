@@ -8,8 +8,10 @@
                 <div class="bg-danger" style="display: inline;">&nbsp;&nbsp;&nbsp;</div><br>&nbsp;
             </div>
         </div>   
-        <div class="row justify-content-center">
-            <Desk v-for="index in 30" :index="index" :key="index" />
+        <div class="row d-flex justify-content-start">
+            
+                <Desk v-for="(table,index) in tables" :table="table" :key="index" />
+            
         </div>
     </div>
 </template>
@@ -19,6 +21,24 @@
     export default {
         components: {
             Desk
+        },
+        beforeCreate() {
+            this.$store.dispatch("getTables")
+        },
+        computed: {
+            tables() {
+                let countArray = [];
+                const tables = this.$store.getters.getTables
+                console.log(tables);
+                tables.forEach(table => {
+                    for(let index= 1; index <= table.count; index++){
+                        console.log(`${table.name} ${index}`)
+                        countArray.push(`${table.name} ${index}`)
+                    }
+                });
+                console.log(countArray)
+                return countArray
+            }
         }
     }
 </script>

@@ -52,7 +52,6 @@
         },
         methods: {
             checked() {
-                    console.log(this.index)
                     this.$emit("addTable",
                     {
                             table : {
