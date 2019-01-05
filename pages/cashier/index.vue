@@ -9,9 +9,7 @@
             </div>
         </div>   
         <div class="row d-flex justify-content-start">
-            
-                <Desk v-for="(table,index) in tables" :table="table" :key="index" />
-            
+                <Desk @clicked="clicked($event)" v-for="(table,index) in tables" :table="table" :key="index" />           
         </div>
     </div>
 </template>
@@ -21,6 +19,11 @@
     export default {
         components: {
             Desk
+        },
+        methods: {
+            clicked(table){
+                this.$router.push({ name: 'payment', params: { table }, props: true })
+            }
         },
         beforeCreate() {
             this.$store.dispatch("getTables")

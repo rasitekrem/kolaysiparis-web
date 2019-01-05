@@ -55,7 +55,6 @@
                 this.$store.dispatch("login", {
                     user: this.user
                 }).then(response => {
-                    console.log(response)
                     if (response.data.status) {
                         if(this.$store.getters.getStep > 3) {
                             this.$router.push("/")

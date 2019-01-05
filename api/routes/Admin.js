@@ -37,8 +37,6 @@ router.post('/saverestaurant',(req,res) => {
 router.post('/checkstatus', (req,res) => {
     User.findById(req.decode.id)
         .then(user => {
-            console.log(user);
-            
             if (user.restaurantId === "none") {
                 res.json({ step: 1})
             } else {
@@ -75,8 +73,17 @@ router.post('/gettables',(req,res) => {
         .then(user => {
             Restaurant.findById(user.restaurantId)
                 .then(restaurant => {
-                    console.log(restaurant)
                     res.json({ tables : restaurant.tables })
+                })
+        })
+})
+
+router.post('/getcategories',(req,res) => {
+    User.findById(req.decode.id)
+        .then(user => {
+            Restaurant.findById(user.restaurantId)
+                .then(restaurant => {
+                    res.json({ categories : restaurant.categories })
                 })
         })
 })

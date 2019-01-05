@@ -6,6 +6,9 @@ const createStore = () => {
         state: {
             authKey: null,
             orders: [],
+            categories: [],
+            cart: [],
+            totalPrice: 0.0,
             tables: [],
             step: null
         },
@@ -24,6 +27,15 @@ const createStore = () => {
             },
             setStep(state,step) {
                 state.step = step;
+            },
+            setCategories(state,categories) {
+                state.categories = categories
+            },
+            setTotalPrice(state, totalPrice) {
+
+            },
+            setCart(state,cart) {
+
             }
         },
         actions: {
@@ -70,7 +82,7 @@ const createStore = () => {
                             localStorage.setItem("authKey",response.data.token);
                             localStorage.setItem("expiresIn",expiresIn);
                             vuexContext.commit("setAuthKey",response.data.token)
-                            //vuexContext.dispatch("checkRestaurantStep")
+                            vuexContext.commit("setStep",response.data.step)
                           }
                         return response;
                       })
@@ -116,7 +128,6 @@ const createStore = () => {
             checkRestaurantStep(vuexContext){
                 return this.$axios.post("/admin/checkstatus",{ data: { token: vuexContext.state.authKey }})
                     .then(response => {
-                        console.log(response)
                         vuexContext.commit("setStep",response.data.step)                       
                     })
             },
@@ -141,8 +152,18 @@ const createStore = () => {
             getTables(vuexContext) {
                 return this.$axios.post("/admin/gettables",{ data: { token: vuexContext.state.authKey }})
                     .then(response => {
-                        console.log(response)
                         vuexContext.state.tables = response.data.tables
+                        return response
+                    })
+            },
+            addToCart(vuexContext,product){},
+            removeProduct(vuexContext,product){},
+            changeCount(vuexContext,product){},
+            getCategories(vuexContext) {
+                return this.$axios.post('/admin/getcategories',{data : { token : vuexContext.state.authKey}})
+                    .then(response => {
+                        console.log(response)
+                        vuexContext.commit('setCategories',response.data.categories)
                         return response
                     })
             }
@@ -162,6 +183,15 @@ const createStore = () => {
             },
             getTables(state) {
                 return state.tables
+            },
+            getCategories(state){
+                return state.categories
+            },
+            getCart(state){
+                return state.cart
+            },
+            getTotalPrice(state){
+                return state.totalPrice
             }
         }
     })

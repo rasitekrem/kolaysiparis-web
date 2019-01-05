@@ -10,7 +10,7 @@
     export default {
         methods: {
             clicked(){
-                alert();
+                this.$emit("clicked",this.table)
             }
         },
         props: ['index','table'],
