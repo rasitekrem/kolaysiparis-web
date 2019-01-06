@@ -1,9 +1,9 @@
 <template>
     <div class="cart-container card shadow">
          <h3 class="text-center ">Adisyon</h3>
-         <Alert />
-         <CartItems />
-         <CartFooter />
+         <Alert v-if="cart.isEmpty"/>
+         <CartItems v-else :products="cart.products"/>
+         <CartFooter :totalPrice="totalPrice"/>
     </div>
 </template>
 
@@ -16,7 +16,22 @@
             CartItems,
             Alert,
             CartFooter
-        }
+        },
+        props: {
+            cart: {
+                type: Object,
+                required: true
+            }
+        },
+        computed: {
+            totalPrice(){
+                if(this.cart.isEmpty){
+                    return 0
+                } else {
+                    return this.cart.totalPrice
+                }
+            }
+        },
     }
 </script>
 

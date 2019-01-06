@@ -1,12 +1,12 @@
 <template>
     <div class="product-container card shadow mr-5">
         <div class="row">
-            <div class="col-sm-2"></div>
+            <div class="col-sm-2"><a class="btn" @click="$emit('back',null)"><fa :icon="['fas', 'angle-double-left']"/> Geri </a></div>
             <h3 class="text-center col-sm-8">{{ category.name }}</h3>
-            <h3 class="col-sm-2 text-right"><a class="btn" @click="test"><fa :icon="['fas', 'angle-down']"/></a></h3>
+            <h3 class="col-sm-2 text-right"></h3>
         </div>
         <div class="list-group">
-            <Product v-for="(product,index) in category.products" :key="index" :product="product"/>
+            <Product v-for="(product,index) in category.products" :key="index" :product="product" :table="table"/>
         </div>
     </div>
 </template>
@@ -18,15 +18,17 @@
             category: {
                 type: Object,
                 required: true
+            },
+            table: {
+                type: String,
+                required: true
             }
         },
         components: {
             Product
         },
         methods: {
-            test(){
-                alert()
-            }
+            
         },
     }
 </script>

@@ -14,5 +14,11 @@
 </script>
 
 <style scoped>
-    
+        .total-price-container{
+            color: #D15385 !important;
+            font-size: 20px;
+        }
+        .bg-custom-color {
+            background-color: #FAF3DF !important;
+        }
 </style>

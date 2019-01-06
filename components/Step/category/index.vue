@@ -15,7 +15,7 @@
                     <div class="col"><b>Fiyat</b></div>
                 </div>
             </div>
-            <Product v-for="index in productCount" :key="index" :index="index" @addProduct="addProduct($event)" />
+            <Product v-for="index in productCount" :key="index" :index="category.name+index" @addProduct="addProduct($event)" />
             <button type="button" class="mt-2 btn btn-secondary" @click.prevent="newProduct" :disabled="isInvalid"><fa class="mr-2" :icon="['fas', 'plus']"/> Ürün ekle</button></div>
     </div>
 </template>

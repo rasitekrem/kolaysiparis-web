@@ -11,7 +11,7 @@
                                v-model="product_count">
                         <button @click="changeCount(true)" class="btn btn-sm btn-outline-success rounded-0">+</button>
                     </div>
-                    <button class="btn btn-sm btn-outline-primary">Ekle</button>
+                    <button class="btn btn-sm btn-outline-primary" @click="addToCart">Ekle</button>
                 </div>
 </template>
 
@@ -26,6 +26,10 @@
             product : {
                 type: Object,
                 required: true
+            },
+            table : {
+                type: String,
+                required: true
             }
         },
         methods: {
@@ -39,7 +43,7 @@
                 }
             },
             addToCart(){
-                this.$store.dispatch("addToCart",{...this.product, count: this.product_count})
+                this.$store.dispatch("addToCart",{ product: { ...this.product, count: this.product_count }, table: this.table })
             }
         },
     }

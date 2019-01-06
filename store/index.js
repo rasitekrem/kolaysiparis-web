@@ -7,8 +7,7 @@ const createStore = () => {
             authKey: null,
             orders: [],
             categories: [],
-            cart: [],
-            totalPrice: 0.0,
+            carts: [],
             tables: [],
             step: null
         },
@@ -31,11 +30,8 @@ const createStore = () => {
             setCategories(state,categories) {
                 state.categories = categories
             },
-            setTotalPrice(state, totalPrice) {
-
-            },
-            setCart(state,cart) {
-
+            setCart(state,carts) {
+                state.carts = carts;
             }
         },
         actions: {
@@ -156,13 +152,27 @@ const createStore = () => {
                         return response
                     })
             },
-            addToCart(vuexContext,product){},
+            addToCart(vuexContext,data){
+                return this.$axios.post("/admin/addcart", { data : { product: data.product,table: data.table, token: vuexContext.state.authKey } })
+                    .then(response => {
+                        console.log(response)
+                        vuexContext.dispatch("getCarts")
+                        console.log(vuexContext.state.carts)
+                    })
+            },
+            getCarts(vuexContext) {
+                return this.$axios.post("/admin/getcarts", { data : { token: vuexContext.state.authKey } })
+                    .then(response => {
+                        if (response.data.status) {
+                            vuexContext.commit("setCart",response.data.carts)
+                        }
+                    })
+            },
             removeProduct(vuexContext,product){},
             changeCount(vuexContext,product){},
             getCategories(vuexContext) {
                 return this.$axios.post('/admin/getcategories',{data : { token : vuexContext.state.authKey}})
                     .then(response => {
-                        console.log(response)
                         vuexContext.commit('setCategories',response.data.categories)
                         return response
                     })
@@ -188,10 +198,7 @@ const createStore = () => {
                 return state.categories
             },
             getCart(state){
-                return state.cart
-            },
-            getTotalPrice(state){
-                return state.totalPrice
+                return state.carts.carts
             }
         }
     })
