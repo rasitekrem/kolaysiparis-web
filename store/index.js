@@ -160,6 +160,22 @@ const createStore = () => {
                         console.log(vuexContext.state.carts)
                     })
             },
+            changeCount(vuexContext,data){
+                return this.$axios.post("/admin/changecount", { data : { product: data.product,table: data.table, token: vuexContext.state.authKey } })
+                    .then(response => {
+                        console.log(response)
+                        vuexContext.dispatch("getCarts")
+                        console.log(vuexContext.state.carts)
+                    })
+            },
+            removeProduct(vuexContext,data){
+                return this.$axios.post("/admin/removeproduct", { data : { product: data.product,table: data.table, token: vuexContext.state.authKey } })
+                    .then(response => {
+                        console.log(response)
+                        vuexContext.dispatch("getCarts")
+                        console.log(vuexContext.state.carts)
+                    })
+            },
             getCarts(vuexContext) {
                 return this.$axios.post("/admin/getcarts", { data : { token: vuexContext.state.authKey } })
                     .then(response => {
@@ -168,8 +184,6 @@ const createStore = () => {
                         }
                     })
             },
-            removeProduct(vuexContext,product){},
-            changeCount(vuexContext,product){},
             getCategories(vuexContext) {
                 return this.$axios.post('/admin/getcategories',{data : { token : vuexContext.state.authKey}})
                     .then(response => {

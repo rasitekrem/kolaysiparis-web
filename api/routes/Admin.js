@@ -116,10 +116,25 @@ router.post('/addcart', (req, res) => {
         })
         .then(carts => {
           if (carts) {
-            console.log(req.body.data)
             let itemIndex = carts.carts.findIndex(item => item.table == req.body.data.table);
             if (itemIndex > -1) {
-                console.log(itemIndex)
+                let productIndex = carts.carts[itemIndex].products.findIndex(item => item.key == req.body.data.product.key);
+                if (productIndex > -1) {
+                  console.log(productIndex)
+                    carts.carts[itemIndex].products[productIndex].count += req.body.data.product.count
+                    carts.carts[itemIndex].products[productIndex].totalPrice = carts.carts[itemIndex].products[productIndex].count * carts.carts[itemIndex].products[productIndex].price
+                    let cartTotalPrice = 0.0;
+                    carts.carts[itemIndex].products.forEach(item => {
+                        cartTotalPrice += (item.totalPrice)
+                    });
+                    carts.carts[itemIndex].totalPrice = cartTotalPrice
+                } else {
+                  carts.carts[itemIndex].products.push({
+                        ...req.body.data.product,
+                        totalPrice: req.body.data.product.price * req.body.data.product.count
+                  })
+                  carts.carts[itemIndex].totalPrice += (req.body.data.product.price * req.body.data.product.count)
+                }
                 //masada adisyon açılmış onun senaryosu yapılacak
             } else {
                 carts.carts.push({
@@ -130,8 +145,8 @@ router.post('/addcart', (req, res) => {
                     }],
                     totalPrice: req.body.data.product.price * req.body.data.product.count
                   })
-                  carts.save()
             }
+            Cart.updateOne({ restaurantId: carts.restaurantId }, carts, (err) => { console.log(err) });
             res.json({ carts })
           } else {
             let carts = new Cart({
@@ -146,6 +161,66 @@ router.post('/addcart', (req, res) => {
                 }]
             })
             carts.save()
+            res.json({ carts })
+          }
+        })
+    })
+})
+router.post('/changecount',(req,res) => {
+  User.findById(req.decode.id)
+    .then(user => {
+      Cart.findOne({
+          restaurantId: user.restaurantId
+        })
+        .then(carts => {
+          if (carts) {
+            let itemIndex = carts.carts.findIndex(item => item.table == req.body.data.table);
+            if (itemIndex > -1) {
+                let productIndex = carts.carts[itemIndex].products.findIndex(item => item.key == req.body.data.product.key);
+                if (productIndex > -1) {
+                  console.log(productIndex)
+                    carts.carts[itemIndex].products[productIndex].count = req.body.data.product.count
+                    carts.carts[itemIndex].products[productIndex].totalPrice = carts.carts[itemIndex].products[productIndex].count * carts.carts[itemIndex].products[productIndex].price
+                    let cartTotalPrice = 0.0;
+                    carts.carts[itemIndex].products.forEach(item => {
+                        cartTotalPrice += (item.totalPrice)
+                    });
+                    carts.carts[itemIndex].totalPrice = cartTotalPrice
+                } 
+            } 
+            Cart.updateOne({ restaurantId: carts.restaurantId }, carts, (err) => { console.log(err) });
+            res.json({ carts })
+          } else {
+            res.json({ carts })
+          }
+        })
+    })
+})
+router.post('/removeproduct',(req,res) => {
+  User.findById(req.decode.id)
+    .then(user => {
+      Cart.findOne({
+          restaurantId: user.restaurantId
+        })
+        .then(carts => {
+          if (carts) {
+            let itemIndex = carts.carts.findIndex(item => item.table == req.body.data.table);
+            if (itemIndex > -1) {
+                let products = carts.carts[itemIndex].products.filter(item => item.key !== req.body.data.product.key);   
+                if (products.length == 0) {
+                  carts.carts = carts.carts.filter(item => item.table !== req.body.data.table);
+                } else {
+                  carts.carts[itemIndex].products = products
+                  let cartTotalPrice = 0.0;
+                    carts.carts[itemIndex].products.forEach(item => {
+                        cartTotalPrice += (item.totalPrice)
+                    });
+                    carts.carts[itemIndex].totalPrice = cartTotalPrice
+                } 
+            } 
+            Cart.updateOne({ restaurantId: carts.restaurantId }, carts, (err) => { console.log(err) });
+            res.json({ carts })
+          } else {
             res.json({ carts })
           }
         })

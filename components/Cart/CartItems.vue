@@ -8,7 +8,7 @@
             <th class="text-center">Sil</th>
         </thead>
         <tbody>
-            <CartItem v-for="product in products" :key="product.key" :product="product"/>
+            <CartItem v-for="product in products" :key="product.key" :product="product" :table="table"/>
         </tbody>
     </table>
 </template>
@@ -22,6 +22,10 @@
         props: {
             products: {
                 type: Array,
+                required: true
+            },
+            table: {
+                type: String,
                 required: true
             }
         },

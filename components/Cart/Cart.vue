@@ -2,7 +2,7 @@
     <div class="cart-container card shadow">
          <h3 class="text-center ">Adisyon</h3>
          <Alert v-if="cart.isEmpty"/>
-         <CartItems v-else :products="cart.products"/>
+         <CartItems v-else :products="cart.products" :table="table"/>
          <CartFooter :totalPrice="totalPrice"/>
     </div>
 </template>
@@ -21,6 +21,10 @@
             cart: {
                 type: Object,
                 required: true
+            },
+            table: {
+                type: String,
+                required: true
             }
         },
         computed: {
@@ -31,6 +35,10 @@
                     return this.cart.totalPrice
                 }
             }
+        },
+        created() {
+            console.log("created")
+            console.log(this.table)
         },
     }
 </script>

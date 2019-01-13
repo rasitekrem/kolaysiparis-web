@@ -32,14 +32,11 @@
             tables() {
                 let countArray = [];
                 const tables = this.$store.getters.getTables
-                console.log(tables);
                 tables.forEach(table => {
                     for(let index= 1; index <= table.count; index++){
-                        console.log(`${table.name} ${index}`)
                         countArray.push(`${table.name} ${index}`)
                     }
                 });
-                console.log(countArray)
                 return countArray
             }
         }
