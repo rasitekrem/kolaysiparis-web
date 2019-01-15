@@ -4,7 +4,7 @@
         <div class="d-flex pt-3 justify-content-center" style="height: 100%">
             <Categories v-if="!categoryName" @category="setCategory($event)" :categories="categories"/>
             <Products v-if="categoryName" :category="category" :table="table" @back="setCategory($event)"/>
-            <Cart :cart="getCart" :table="table"/>
+            <Cart :cart="getCart" :table="table" @actionCart="actionCart($event)"/>
         </div>
     </div>
 </template>
@@ -64,6 +64,11 @@
         methods: {
             setCategory(categoryName) {
                 this.categoryName = categoryName
+            },
+            actionCart(action) {
+                if (action === "takingOrder") {
+                    this.$store.dispatch("takingOrder",this.getCart)
+                }
             }
         },
     }

@@ -3,7 +3,7 @@
          <h3 class="text-center ">Adisyon</h3>
          <Alert v-if="cart.isEmpty"/>
          <CartItems v-else :products="cart.products" :table="table"/>
-         <CartFooter :totalPrice="totalPrice"/>
+         <CartFooter @actionCart="$emit('actionCart',$event)" :totalPrice="totalPrice"/>
     </div>
 </template>
 

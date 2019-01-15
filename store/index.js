@@ -32,6 +32,9 @@ const createStore = () => {
             },
             setCart(state,carts) {
                 state.carts = carts;
+            },
+            setOrders(state,orders) {
+                state.orders = orders
             }
         },
         actions: {
@@ -188,6 +191,13 @@ const createStore = () => {
                 return this.$axios.post('/admin/getcategories',{data : { token : vuexContext.state.authKey}})
                     .then(response => {
                         vuexContext.commit('setCategories',response.data.categories)
+                        return response
+                    })
+            },
+            takingOrder(vuexContext,data) {
+                return this.$axios.post('/admin/takingorder',{data : { ...data, token : vuexContext.state.authKey}})
+                    .then(response => {
+                        vuexContext.commit('setOrders',response.data.orders)
                         return response
                     })
             }

@@ -3,7 +3,9 @@ const router = express.Router();
 const Restaurant = require("../models/restaurantModel");
 const verifyToken = require('../middleware/verifytoken')
 const User = require('../models/userModel');
-const Cart = require('../models/cartModel')
+const Cart = require('../models/cartModel');
+const Order = require('../models/orderModel');
+
 router.post('/saverestaurant', (req, res) => {
   const {
     restaurantName,
@@ -120,7 +122,6 @@ router.post('/addcart', (req, res) => {
             if (itemIndex > -1) {
                 let productIndex = carts.carts[itemIndex].products.findIndex(item => item.key == req.body.data.product.key);
                 if (productIndex > -1) {
-                  console.log(productIndex)
                     carts.carts[itemIndex].products[productIndex].count += req.body.data.product.count
                     carts.carts[itemIndex].products[productIndex].totalPrice = carts.carts[itemIndex].products[productIndex].count * carts.carts[itemIndex].products[productIndex].price
                     let cartTotalPrice = 0.0;
@@ -178,7 +179,6 @@ router.post('/changecount',(req,res) => {
             if (itemIndex > -1) {
                 let productIndex = carts.carts[itemIndex].products.findIndex(item => item.key == req.body.data.product.key);
                 if (productIndex > -1) {
-                  console.log(productIndex)
                     carts.carts[itemIndex].products[productIndex].count = req.body.data.product.count
                     carts.carts[itemIndex].products[productIndex].totalPrice = carts.carts[itemIndex].products[productIndex].count * carts.carts[itemIndex].products[productIndex].price
                     let cartTotalPrice = 0.0;
@@ -235,6 +235,44 @@ router.post('/getcarts', (req,res) => {
             status: true,
             carts
           })
+        })
+        .catch(err => res.json({status: false,carts : null }))
+    })
+})
+router.post('/takingorder',(req,res) => {
+  User.findById(req.decode.id)
+    .then(user => {
+      Order.findOne({restaurantId : user.restaurantId})
+        .then(order => {
+          if (order) {
+            let itemIndex = order.orders.findIndex(item => item.table == req.body.data.table);
+            if (itemIndex > -1) {
+              order.orders[itemIndex] = {
+                table: req.body.data.table,
+                products: req.body.data.products,
+                status: 'Sipariş Hazırlanıyor'
+              }
+            } else {
+              order.orders.push({
+                table: req.body.data.table,
+                products: req.body.data.products,
+                status: 'Sipariş Hazırlanıyor'
+              })
+            }
+            Order.updateOne({ restaurantId: order.restaurantId }, order, (err) => { console.log(err) });
+            res.json({ orders: order.orders, status: true })
+          } else {
+             let newOrder = new Order({
+              restaurantId: user.restaurantId,
+              orders: [{
+                table: req.body.data.table,
+                products: req.body.data.products,
+                status: 'Sipariş Hazırlanıyor'
+              }]
+            })
+            newOrder.save()
+            res.json({ orders: newOrder.orders, status: true })
+          }
         })
         .catch(err => res.json({status: false,carts : null }))
     })
