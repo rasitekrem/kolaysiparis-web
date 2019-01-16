@@ -197,6 +197,22 @@ const createStore = () => {
             takingOrder(vuexContext,data) {
                 return this.$axios.post('/admin/takingorder',{data : { ...data, token : vuexContext.state.authKey}})
                     .then(response => {
+                        vuexContext.dispatch('checkOrders')
+                        return response
+                    })
+            },
+            checkOrders(vuexContext) {
+                return this.$axios.post('/admin/checkorders',{data : { token : vuexContext.state.authKey}})
+                    .then(response => {
+                        vuexContext.commit('setOrders',response.data.orders)
+                        return response
+                    })
+            },
+            changeOrderStatus(vuexContext,data) {
+                console.log(data)
+                return this.$axios.post('/admin/changeorderstatus',{data : { ...data, token : vuexContext.state.authKey}})
+                    .then(response => {
+                        //vuexContext.dispatch('checkOrders')
                         vuexContext.commit('setOrders',response.data.orders)
                         return response
                     })
@@ -223,6 +239,9 @@ const createStore = () => {
             },
             getCart(state){
                 return state.carts.carts
+            },
+            getOrders(state) {
+                return state.orders.orders
             }
         }
     })

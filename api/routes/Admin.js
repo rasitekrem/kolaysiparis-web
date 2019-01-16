@@ -277,6 +277,35 @@ router.post('/takingorder',(req,res) => {
         .catch(err => res.json({status: false,carts : null }))
     })
 })
+router.post('/checkorders',(req,res) => {
+  User.findById(req.decode.id)
+    .then(user => {
+      Order.findOne({restaurantId : user.restaurantId})
+        .then(orders => {
+          res.json({
+            status: true,
+            orders
+          })
+        })
+        .catch(err => res.json({status: false,orders : null }))
+    })
+})
+router.post('/changeorderstatus',(req,res) => {
+  User.findById(req.decode.id)
+    .then(user => {
+      Order.findOne({restaurantId : user.restaurantId})
+        .then(order => {
+          order.orders = req.body.data.additions
+          console.log(order)
+          Order.updateOne({ restaurantId: order.restaurantId }, order, (err) => { console.log(err) });
+          res.json({
+            status: true,
+            orders: order
+          })
+        })
+        .catch(err => res.json({status: false,orders : null }))
+    })
+})
 router.post('/history', (req, res) => {
 
 })

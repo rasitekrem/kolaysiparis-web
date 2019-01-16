@@ -3,7 +3,7 @@
          <h3 class="text-center ">Adisyon</h3>
          <Alert v-if="cart.isEmpty"/>
          <CartItems v-else :products="cart.products" :table="table"/>
-         <CartFooter @actionCart="$emit('actionCart',$event)" :totalPrice="totalPrice"/>
+         <CartFooter @actionCart="$emit('actionCart',$event)" :table="table" :totalPrice="totalPrice"/>
     </div>
 </template>
 
@@ -35,11 +35,7 @@
                     return this.cart.totalPrice
                 }
             }
-        },
-        created() {
-            console.log("created")
-            console.log(this.table)
-        },
+        }
     }
 </script>
 

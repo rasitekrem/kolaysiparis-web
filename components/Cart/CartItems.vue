@@ -29,10 +29,6 @@
                 required: true
             }
         },
-        created() {
-            console.log('here')
-            console.log(this.products)
-        },
         computed: {
             
         },

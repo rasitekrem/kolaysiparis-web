@@ -1,7 +1,7 @@
 <template>
-    <div class="card mx-2 my-1 col-sm-3" :class="additionClass" style="max-width: 20rem;">
+    <div class="card mx-2 my-1 col-sm-3" :class="additionClass" style="max-width: 20rem;" v-if="addition.status !== 'Sipariş Teslim Edildi'">
         <div class="card-header text-light">
-            <h3 class="card-title">{{ addition.tableInfo }}</h3>
+            <h3 class="card-title">{{ addition.table }}</h3>
         </div>
         <div class="card-body">
             <div class="card-subtitle text-light">{{ addition.status }}</div>
@@ -10,23 +10,17 @@
             </ul>
         </div>
         <div class="card-footer d-flex justify-content-center">
-            <button @click="toReady" class="btn btn-warning btn-block" v-if="!isReady">Hazır</button>
-            <button class="btn btn-info  btn-block" v-else>Servis Edildi</button>
+            <button @click="changeStatus('Sipariş Hazır')" class="btn btn-warning btn-block" v-if="addition.status === 'Sipariş Hazırlanıyor'">Hazır</button>
+            <button @click="changeStatus('Sipariş Teslim Edildi')" class="btn btn-info  btn-block" v-else>Servis Edildi</button>
         </div>
     </div>
 </template>
 
 <script>
     export default {
-        middleware: ['order'],
-        data() {
-            return {
-                isReady: false
-            }
-        },
         props: {
             addition: {
-                tableInfo: {
+                table: {
                     type: String,
                     required: true
                 },
@@ -37,16 +31,12 @@
                 status: {
                     type: String,
                     required: true
-                },
-                additionId: {
-                    type: String,
-                    required: true
                 }
             }
         },
         computed: {
             additionClass () {
-                if (this.addition.status === "Sipariş Verildi") {
+                if (this.addition.status === "Sipariş Hazırlanıyor") {
                     return ['bg-danger','text-danger']
                 } else {
                     return ['bg-warning','text-warning']
@@ -54,10 +44,10 @@
             }
         },
         methods: {
-            toReady() {
-                this.isReady = true;
-                this.addition.status = "Sipariş Hazır"
+            changeStatus(status) {
+                this.addition.status = status
+                this.$emit('changeStatus',this.addition)
             }
-        }
+        },
     }
 </script>

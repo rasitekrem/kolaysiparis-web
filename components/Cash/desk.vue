@@ -13,22 +13,21 @@
                 this.$emit("clicked",this.table)
             }
         },
-        props: ['index','table'],
+        props: ['index','table','status'],
         computed: {
             cardClass () {
-                let mod = this.index % 4;
-                switch (mod) {
-                    case 0:
+                switch (this.status) {
+                    case 'Sipariş Teslim Edildi':
                         return ['bg-info','text-light']
                         break;
-                    case 1:
-                        return ['bg-warning','text-light']
+                    case 'Sipariş Hazırlanıyor':
+                        return ['bg-danger','text-light']
                         break;
-                    case 2:
+                    case 'Sipariş Yok':
                         return ['bg-light','text-dark']
                         break
-                    case 3:
-                        return ['bg-danger','text-light']
+                    case 'Sipariş Hazır':
+                        return ['bg-warning','text-light']
                         break;                 
                     default:
                         break;
