@@ -14,7 +14,6 @@
     import Cart from '@/components/Cart/Cart';
     import Categories from '@/components/Category/Categories';
     export default {
-        middleware: ['payment'],
         data() {
             return {
                 isCategory : true,
@@ -54,11 +53,8 @@
                          cart.isEmpty = false
                     }
                 });
-               
                 }
-                console.log(cart)
                 return cart
-                
             }
         },
         methods: {
@@ -68,6 +64,8 @@
             actionCart(action) {
                 if (action === "takingOrder") {
                     this.$store.dispatch("takingOrder",this.getCart)
+                } else if(action === "payOrder") {
+                    this.$router.push({ name: 'pay', params: { table: this.table }, props: true })
                 }
             }
         },

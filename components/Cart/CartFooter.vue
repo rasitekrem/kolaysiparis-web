@@ -3,7 +3,7 @@
         
         <div class="total-price d-flex justify-content-between rounded-0" v-if="totalPrice > 0">
             <button class="btn btn-outline-success" v-if="status === 'Sipariş Yok'" @click="order">Sipariş Ver</button>
-            <button class="btn btn-outline-danger" v-else-if="status === 'Sipariş Teslim Edildi'" @click="order">Ödeme Yap</button>
+            <button class="btn btn-outline-danger" v-else-if="status === 'Sipariş Teslim Edildi'" @click="pay">Ödeme Yap</button>
              <button class="btn btn-outline-success" v-else @click="order">Güncelle</button>
             <div class="d-flex justify-content-end">
                 <strong style="font-size: 18px;">Toplam Tutar : </strong>
@@ -22,11 +22,8 @@
             order() {
                 this.$emit('actionCart','takingOrder')
             },
-            update() {
-
-            },
             pay() {
-
+                this.$emit('actionCart','payOrder')
             }
         },
         computed: {

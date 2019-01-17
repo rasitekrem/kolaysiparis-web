@@ -231,12 +231,19 @@ router.post('/getcarts', (req,res) => {
     .then(user => {
       Cart.findOne({restaurantId : user.restaurantId})
         .then(carts => {
-          res.json({
-            status: true,
-            carts
-          })
+          if (carts) {
+            res.json({
+              status: true,
+              carts
+            })
+          } else {
+            res.json({
+              status: true,
+              carts: []
+            })
+          }
         })
-        .catch(err => res.json({status: false,carts : null }))
+        .catch(err => res.json({status: false,carts : [] }))
     })
 })
 router.post('/takingorder',(req,res) => {
@@ -250,12 +257,14 @@ router.post('/takingorder',(req,res) => {
               order.orders[itemIndex] = {
                 table: req.body.data.table,
                 products: req.body.data.products,
+                totalPrice: req.body.data.totalPrice,
                 status: 'Sipariş Hazırlanıyor'
               }
             } else {
               order.orders.push({
                 table: req.body.data.table,
                 products: req.body.data.products,
+                totalPrice: req.body.data.totalPrice,
                 status: 'Sipariş Hazırlanıyor'
               })
             }
@@ -267,6 +276,7 @@ router.post('/takingorder',(req,res) => {
               orders: [{
                 table: req.body.data.table,
                 products: req.body.data.products,
+                totalPrice: req.body.data.totalPrice,
                 status: 'Sipariş Hazırlanıyor'
               }]
             })
@@ -282,12 +292,20 @@ router.post('/checkorders',(req,res) => {
     .then(user => {
       Order.findOne({restaurantId : user.restaurantId})
         .then(orders => {
-          res.json({
-            status: true,
-            orders
-          })
+          if (orders) {
+            res.json({
+              status: true,
+              orders
+            })
+          } else {
+            res.json({
+              status: false,
+              orders: []
+            })
+          }
+          
         })
-        .catch(err => res.json({status: false,orders : null }))
+        .catch(err => res.json({status: false,orders : [] }))
     })
 })
 router.post('/changeorderstatus',(req,res) => {

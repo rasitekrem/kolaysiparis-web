@@ -17,7 +17,6 @@
 <script>
     import Desk from '@/components/Cash/desk'
     export default {
-        middleware: ['ordercheck'],
         components: {
             Desk
         },

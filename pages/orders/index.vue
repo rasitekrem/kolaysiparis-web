@@ -10,7 +10,6 @@
 <script>
     import Order from '@/components/Order/order'
     export default {
-        middleware: ['ordercheck'],
         components: {
             Order
         },

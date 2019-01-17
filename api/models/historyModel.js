@@ -13,4 +13,4 @@ var HistorySchema = new Schema({
   }
 });
 
-module.exports = mongoose.model('History', OrderSchema);
+module.exports = mongoose.model('History', HistorySchema);

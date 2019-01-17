@@ -197,7 +197,7 @@ const createStore = () => {
             takingOrder(vuexContext,data) {
                 return this.$axios.post('/admin/takingorder',{data : { ...data, token : vuexContext.state.authKey}})
                     .then(response => {
-                        vuexContext.dispatch('checkOrders')
+                        vuexContext.commit('setOrders',response.data.orders)
                         return response
                     })
             },
@@ -209,10 +209,8 @@ const createStore = () => {
                     })
             },
             changeOrderStatus(vuexContext,data) {
-                console.log(data)
                 return this.$axios.post('/admin/changeorderstatus',{data : { ...data, token : vuexContext.state.authKey}})
                     .then(response => {
-                        //vuexContext.dispatch('checkOrders')
                         vuexContext.commit('setOrders',response.data.orders)
                         return response
                     })
