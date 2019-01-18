@@ -6,10 +6,7 @@
                     <td class="small-title pt-1 pb-1">ÖDENMİŞ</td>
                 </tr>
                 <tr class="table-stripe">
-                    <td class="d-flex justify-content-between">
-                        <span class="ml-0">Çay <span class="font-weight-bold"><span>x1</span></span></span>
-                        <span class="text-right mr-0">4.00 ₺</span>
-                    </td>
+                    <PaidItem v-for="(product,index) in paid" :key="index" :product="product"/>
                 </tr>
             </tbody>
         </table>
@@ -17,8 +14,17 @@
 </template>
 
 <script>
+    import PaidItem from '@/components/Pay/PaidItem.vue';
     export default {
-    
+        components: {
+            PaidItem
+        },
+        props: {
+             paid: {
+                type: Object,
+                required: true
+            },
+        }
     }
 </script>
 

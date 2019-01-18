@@ -7,7 +7,7 @@ var HistorySchema = new Schema({
     unique: true,
     required: true
   },
-  orders: {
+  histories: {
     type: Array,
     required: false
   }

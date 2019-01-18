@@ -1,7 +1,7 @@
 <template>
      <div class="container-fluid mr-0 mt-5 col-md-10 ">
-    <Day :showDetail="true"/>
-    <Chart />
+    <Day :showDetail="true" :dayDetail="dayDetail"/>
+    <Chart :chart="getChart"/>
 </div>
 </template>
 
@@ -12,7 +12,15 @@
         components: {
             Day,
             Chart,
-        }
+        },
+        computed: {
+            dayDetail() {
+                return this.$store.getters.dayDetail
+            },
+            getChart() {
+                return this.$store.getters.getChart
+            }
+        },
     }
 </script>
 

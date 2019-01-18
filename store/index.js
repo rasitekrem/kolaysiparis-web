@@ -9,6 +9,7 @@ const createStore = () => {
             categories: [],
             carts: [],
             tables: [],
+            histories: [],
             step: null
         },
         mutations: {
@@ -35,6 +36,9 @@ const createStore = () => {
             },
             setOrders(state,orders) {
                 state.orders = orders
+            },
+            setHistory(state,histories) {
+                state.histories = histories
             }
         },
         actions: {
@@ -214,6 +218,28 @@ const createStore = () => {
                         vuexContext.commit('setOrders',response.data.orders)
                         return response
                     })
+            },
+            paid(vuexContext,data) {
+                return this.$axios.post('/admin/history',{data : { ...data, token : vuexContext.state.authKey}})
+                    .then(response => {
+                        vuexContext.commit('setHistory',response.data.histories)
+                        return response
+                    })
+            },
+            checkHistory(vuexContext) {
+                return this.$axios.post('/admin/checkhistory',{data : { token : vuexContext.state.authKey}})
+                    .then(response => {
+                        vuexContext.commit('setHistory',response.data.histories)
+                        return response
+                    })
+            },
+            closeAddition(vuexContext,data){
+                return this.$axios.post('/admin/closeaddition',{data : { ...data,token : vuexContext.state.authKey}})
+                    .then(response => {
+                        vuexContext.commit('setOrders',response.data.orders)
+                        vuexContext.commit('setCart',response.data.carts)
+                        return response
+                    })
             }
         },
         getters: {
@@ -240,6 +266,76 @@ const createStore = () => {
             },
             getOrders(state) {
                 return state.orders.orders
+            },
+            getHistory(state) {
+                return state.histories.history
+            },
+            dayDetail(state){
+                let additionsPrice = 0
+                let waitOrderCount = 0
+                let notWaitCount = 0
+                 if (state.orders.orders) {
+                    state.orders.orders.forEach((order) => {
+                        if (order.status !== "Sipariş Teslim Edildi") {
+                           waitOrderCount++
+                        } else {
+                           notWaitCount++
+                        }
+                        additionsPrice += order.totalPrice
+                    })
+                 }
+                 let historyPrice = 0
+                 let cashPrice = 0
+                 let creditPrice = 0
+                 let otherPrice = 0
+                 if (state.histories.histories) {
+                    state.histories.histories.forEach((history) => {
+                        if (history.payMethod="Nakit") {
+                            cashPrice+= history.totalPrice
+                        } else if(history.payMethod="Kredi") {
+                            creditPrice+= history.totalPrice
+                        } else {
+                            otherPrice+= history.totalPrice
+                        }
+                        historyPrice+= history.totalPrice
+                    })
+                 }
+                 return {
+                     adition: {
+                        additionsPrice,
+                        waitOrderCount,
+                        notWaitCount
+                     },
+                     history: {
+                        historyPrice,
+                        cashPrice,
+                        creditPrice,
+                        otherPrice
+                     }
+                 }
+                 
+            } ,
+            getChart(state) {
+                let totalTable = 0
+                state.tables.forEach(table => {
+                    totalTable+= +table.count
+                })
+                let waitOrderCount = 0
+                let openCount = 0
+                 if (state.orders.orders) {
+                    state.orders.orders.forEach((order) => {
+                        if (order.status !== "Sipariş Teslim Edildi") {
+                           waitOrderCount++
+                        } 
+                        openCount ++
+                    })
+                 }
+                 console.log(totalTable)
+                 return {
+                    openCount,
+                    waitOrderCount,
+                    emptyCount: totalTable-openCount
+                 }
             }
         }
     })

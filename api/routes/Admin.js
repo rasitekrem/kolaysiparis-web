@@ -5,6 +5,7 @@ const verifyToken = require('../middleware/verifytoken')
 const User = require('../models/userModel');
 const Cart = require('../models/cartModel');
 const Order = require('../models/orderModel');
+const Histories = require('../models/historyModel');
 
 router.post('/saverestaurant', (req, res) => {
   const {
@@ -325,6 +326,83 @@ router.post('/changeorderstatus',(req,res) => {
     })
 })
 router.post('/history', (req, res) => {
-
+  User.findById(req.decode.id)
+  .then(user => {
+    Histories.findOne({restaurantId : user.restaurantId})
+      .then(histories => {
+        if (histories) {
+          if (histories.histories.length > 0) {
+            histories.histories.push({
+                table: req.body.data.table,
+                products: req.body.data.products,
+                totalPrice: req.body.data.totalPrice,
+                payMethod: req.body.data.payMethod,
+                date: new Date().getTime()
+            })
+          } else {
+            histories.histories = [{
+              table: req.body.data.table,
+              products: req.body.data.products,
+              totalPrice: req.body.data.totalPrice,
+              payMethod: req.body.data.payMethod,
+              date: new Date().getTime()
+          }]
+          }
+          Histories.updateOne({ restaurantId: histories.restaurantId }, histories, (err) => { console.log(err) });
+          res.json({ histories })
+        } else {
+          let newHistory = new Histories({
+            restaurantId: user.restaurantId,
+            histories: [
+              {
+                table: req.body.data.table,
+                products: req.body.data.products,
+                totalPrice: req.body.data.totalPrice,
+                payMethod: req.body.data.payMethod,
+                date: new Date().getTime()
+              }
+            ]
+            })
+            newHistory.save()
+            res.json({histories: newHistory}) 
+        }
+        
+      })
+      .catch(err => res.json({status: false,histories : [] }))
+  })
+})
+router.post('/checkhistory',(req,res) => {
+  User.findById(req.decode.id)
+    .then(user => {
+      Histories.findOne({restaurantId : user.restaurantId})
+        .then(histories => {
+          if (histories) {
+              res.json({ histories })
+          } else {
+            res.json({ histories: [] })
+          }
+        })
+        .catch(err => res.json({status: false,histories : [] }))
+    })
+})
+router.post('/closeaddition',(req,res) => {
+  console.log(req.body.data)
+  User.findById(req.decode.id)
+    .then(user => {
+      Cart.findOne({restaurantId : user.restaurantId})
+        .then(carts => {
+          carts.carts = carts.carts.filter(cart => 
+            cart.table !== req.body.data.table
+          )
+          Cart.updateOne({ restaurantId: carts.restaurantId }, carts, (err) => { console.log(err) });
+          Order.findOne({restaurantId : user.restaurantId})
+            .then(orders => {
+              orders.orders = orders.orders.filter(order =>  order.table !== req.body.data.table)
+              Order.updateOne({ restaurantId: orders.restaurantId }, orders, (err) => { console.log(err) });
+              res.json({ orders, carts })
+            })
+        })
+        .catch(err => res.json({status: false,histories : [] }))
+    })
 })
 module.exports = router;

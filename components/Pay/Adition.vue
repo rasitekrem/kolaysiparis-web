@@ -4,11 +4,11 @@
         <div class="pt-0 pr-0 pl-0 pb-0 card-body">
             <p class="text-muted text-center ml-3 mr-3 mt-3" v-if="order.isEmpty">Bu masada adisyon yok</p>
             <div v-else>
-                <Unpaid :unpaid="unpaid"/>
-                <Paid v-if="addition.paid.length > 0" :paid="paid"/>
+                <Unpaid :unpaid="unpaid" @selected="selected($event)" :clean="clean" @cleaned="$emit('cleaned')" />
+                <Paid v-if="addition.paid.length > 0" :paid="paid" />
             </div>
         </div>
-        <PayFooter :paidPrice="paidPrice" :unpaidPrice="unpaidPrice" :totalPrice="totalPrice"/>
+        <PayFooter :paidPrice="paidPrice" :unpaidPrice="unpaidPrice" :totalPrice="totalPrice" />
     </div>
 </template>
 
@@ -24,61 +24,107 @@
                     paid: [],
                     unpaidPrice: 0,
                     paidPrice: 0
-                }
+                },
+                selectedProducts: []
             }
+        },
+        props: {
+            order: {
+                type: Object,
+                required: true
+            },
+            clean: Boolean,
+            isPaid: Boolean
+        },
+        watch: {
+            clean: {
+                handler(val) {
+                   if (val) {
+                    this.selectedProducts = []
+                    }
+                },
+                deep: true,
+            },
+            isPaid: {
+                handler(val) {
+                   if (val) {
+                     this.addition.paid = this.addition.unpaid
+                     this.addition.unpaid = []
+                     this.addition.paidPrice = this.addition.unpaidPrice
+                     this.addition.unpaidPrice = 0
+                     this.selectedProducts = []
+                    }
+                },
+                deep: true,
+            },
         },
         components: {
             Unpaid,
             Paid,
             PayFooter
         },
-        props: {
-            order: {
-                type: Object,
-                required: true
-            }
-        },
         created() {
-            if(!this.order.isEmpty) {
+            if (!this.order.isEmpty) {
                 this.addition.unpaid = this.order.products
                 this.addition.unpaidPrice = this.totalPrice
             }
         },
         computed: {
-            unpaid(){
-                if(this.order.isEmpty){
+            unpaid() {
+                if (this.order.isEmpty) {
                     return []
                 } else {
                     return this.addition.unpaid
                 }
             },
-            paid(){
-                if(this.order.isEmpty){
+            paid() {
+                if (this.order.isEmpty) {
                     return []
                 } else {
                     return this.addition.paid
                 }
             },
-            unpaidPrice(){
-                if(this.order.isEmpty){
+            unpaidPrice() {
+                if (this.order.isEmpty) {
                     return 0
                 } else {
                     return this.addition.unpaidPrice
                 }
             },
-            paidPrice(){
-                if(this.order.isEmpty){
+            paidPrice() {
+                if (this.order.isEmpty) {
                     return 0
                 } else {
                     return this.addition.paidPrice
                 }
             },
-            totalPrice(){
-                if(this.order.isEmpty){
+            totalPrice() {
+                if (this.order.isEmpty) {
                     return 0
                 } else {
                     return this.order.totalPrice
                 }
+            }
+        },
+        methods: {
+            selected(product) {
+    
+                let selectedIndex = this.selectedProducts.findIndex(item => {
+                    if (item.key == product.key) {
+                        return true
+                    }
+                })
+                if (selectedIndex > -1) {
+                    this.selectedProducts[selectedIndex].count = product.count
+                    this.selectedProducts[selectedIndex].totalPrice = product.totalPrice
+                } else {
+                    this.selectedProducts.push(product)
+                }
+                let totalPrice = 0
+                this.selectedProducts.forEach((item) => {
+                    totalPrice += (item.totalPrice)
+                })
+                this.$emit('totalPrice', totalPrice)
             }
         },
     }
