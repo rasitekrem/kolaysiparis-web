@@ -31,27 +31,27 @@
         <span>Yönetim</span>
       </h6>
       <ul class="nav flex-column mb-2">
-        <nuxt-link tag="li" to="/raporlar" active-class="active" class="nav-item ml-2">
+        <nuxt-link tag="li" to="/reports" active-class="active" class="nav-item ml-2">
           <a class="nav-link" href="#">
             <fa class="mr-2" :icon="['fas', 'chart-line']" /> Raporlar
           </a>
         </nuxt-link>
-        <nuxt-link tag="li" to="/personal" active-class="active" class="nav-item ml-2">
+        <nuxt-link tag="li" to="/editpersonal" active-class="active" class="nav-item ml-2">
           <a class="nav-link">
             <fa class="mr-2" :icon="['fas', 'users']" /> Personel
           </a>
         </nuxt-link>
-        <nuxt-link tag="li" to="/menu" active-class="active" class="nav-item ml-2">
+        <nuxt-link tag="li" to="/editmenu" active-class="active" class="nav-item ml-2">
           <a class="nav-link">
             <fa class="mr-2" :icon="['fas', 'book']" /> Menu
           </a>
         </nuxt-link>
-        <nuxt-link tag="li" to="/masa" active-class="active" class="nav-item ml-2">
+        <nuxt-link tag="li" to="/edittables" active-class="active" class="nav-item ml-2">
           <a class="nav-link">
             <fa class="mr-2" :icon="['fas', 'table']" /> Masa
           </a>
         </nuxt-link>
-        <nuxt-link tag="li" to="/ayarlar" active-class="active" class="nav-item ml-2">
+        <nuxt-link tag="li" to="/settings" active-class="active" class="nav-item ml-2">
           <a class="nav-link">
             <fa class="mr-2" :icon="['fas', 'wrench']" /> Hesap Ayarları
           </a>

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt')
 const Restaurant = require("../models/restaurantModel");
 const verifyToken = require('../middleware/verifytoken')
 const User = require('../models/userModel');
@@ -386,7 +387,6 @@ router.post('/checkhistory',(req,res) => {
     })
 })
 router.post('/closeaddition',(req,res) => {
-  console.log(req.body.data)
   User.findById(req.decode.id)
     .then(user => {
       Cart.findOne({restaurantId : user.restaurantId})
@@ -404,5 +404,95 @@ router.post('/closeaddition',(req,res) => {
         })
         .catch(err => res.json({status: false,histories : [] }))
     })
+})
+router.post('/savepassword',(req,res) => {
+  const {
+    newPassword,
+    renewPassword,
+    oldPassword
+  } = req.body.data
+  User.findById(req.decode.id)
+  .then(user => {
+    if (renewPassword !== newPassword) {
+      res.json({
+        status: false,
+        message: "Parolalar uyuşmuyor"
+      })
+    } else {
+      bcrypt.compare(oldPassword, user.password).then((result) => {
+        console.log(user.password)
+        console.log(result)
+        if (result) {
+          bcrypt.hash(newPassword, 10).then((newhash) => {
+            user.password = newhash
+            user.save((err) => {
+              if (err) {
+                res.json({
+                  status: false,
+                  message: err.message
+                })
+              } else {
+                res.json({
+                  status: true,
+                  message: "Şifre değiştirildi."
+                })
+              }
+            })
+          })
+        } else {
+          res.json({
+            status: false,
+            message: "Eski şifre hatalı!"
+          })
+        }
+      })
+    }
+  })
+})
+router.post('/restaurantinfo',(req,res) => {
+  User.findById(req.decode.id)
+  .then(user => {
+    if (user) {
+        Restaurant.findById(user.restaurantId)
+          .then(restaurant => {
+            console.log(restaurant)
+              if(restaurant) {
+                res.json({ restaurantInfo : restaurant })
+              } else {
+                res.json({ restaurantInfo: {}})
+              }
+          })
+    } else {
+      res.json({ restaurantInfo: {}})
+    }
+  })
+})
+router.post('/restaurantupdate',(req,res) => {
+  Restaurant.findByIdAndUpdate(req.body.data.restaurantData._id, req.body.data.restaurantData, {new: true}, (err, model) => {
+    if (err) {
+      res.json({ status: false, message: err.message })
+    } else {
+      res.json({ status: true, message: 'Bilgiler değiştirildi.' })
+    }
+  })
+})
+router.post('/updatetables' , (req,res) => {
+  console.log(req.body.data)
+  User.findById(req.decode.id)
+  .then(user => {
+    if (user) {
+        Restaurant.findById(user.restaurantId)
+          .then(restaurant => {
+              restaurant.tables = req.body.data.tables
+              restaurant.save((err) => {
+                if (err) {
+                  res.json({ status: false, tables: req.body.data.tables })
+                } else {
+                  res.json({ status: true, tables: req.body.data.tables })
+                }
+              })
+          })
+    } 
+  })
 })
 module.exports = router;

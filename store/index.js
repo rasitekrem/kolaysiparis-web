@@ -10,6 +10,7 @@ const createStore = () => {
             carts: [],
             tables: [],
             histories: [],
+            restaurantInfo: {},
             step: null
         },
         mutations: {
@@ -39,6 +40,9 @@ const createStore = () => {
             },
             setHistory(state,histories) {
                 state.histories = histories
+            },
+            setRestaurantInfo(state,restaurantInfo) {
+                state.restaurantInfo = restaurantInfo
             }
         },
         actions: {
@@ -240,7 +244,33 @@ const createStore = () => {
                         vuexContext.commit('setCart',response.data.carts)
                         return response
                     })
-            }
+            },
+            savePassword(vuexContext,data) {
+                return this.$axios.post('/admin/savepassword',{data : { ...data,token : vuexContext.state.authKey}})
+                    .then(response => {
+                        return response
+                    })
+            },
+            restaurantInfo(vuexContext) {
+                return this.$axios.post('/admin/restaurantinfo',{data : { token : vuexContext.state.authKey}})
+                    .then(response => {
+                        console.log(response)
+                        vuexContext.commit('setRestaurantInfo',response.data.restaurantInfo)
+                    })
+            },
+            saveRestaurant(vuexContext,data) {
+                return this.$axios.post('/admin/restaurantupdate',{data : { restaurantData : { ...data }, token : vuexContext.state.authKey}})
+                    .then(response => {
+                        vuexContext.commit('setRestaurantInfo',response.data.restaurantInfo)
+                    })
+            },
+            updateTables(vuexContext,data) {
+                console.log(data)
+                return this.$axios.post('/admin/updatetables',{data : { tables : data, token : vuexContext.state.authKey}})
+                    .then(response => {
+                        vuexContext.state.tables = response.data.tables
+                    })
+            } 
         },
         getters: {
             isAuthenticated(state) {
@@ -336,6 +366,9 @@ const createStore = () => {
                     waitOrderCount,
                     emptyCount: totalTable-openCount
                  }
+            },
+            getRestaurantInfo(state) {
+                return state.restaurantInfo
             }
         }
     })

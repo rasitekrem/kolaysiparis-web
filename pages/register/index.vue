@@ -76,7 +76,6 @@
                 this.$store.dispatch("register", {
                     user: this.user
                 }).then(response => {
-                    console.log(response)
                     if (response.data.status) {
                         this.$router.push("/options")
                     } else {
