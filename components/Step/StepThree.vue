@@ -38,7 +38,7 @@
                 this.categories = this.categories.filter(tab => {
                     return data.category.key !== tab.key
                 });
-                if (data.category.name !== null && data.category.prodcuts !== null) {
+                if (data.category.name !== null && data.category.products !== null) {
                     this.categories.push(data.category)
                     this.categories.sort((a, b) => {
                         return a.key - b.key

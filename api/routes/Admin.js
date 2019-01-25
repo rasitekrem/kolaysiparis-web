@@ -477,7 +477,6 @@ router.post('/restaurantupdate',(req,res) => {
   })
 })
 router.post('/updatetables' , (req,res) => {
-  console.log(req.body.data)
   User.findById(req.decode.id)
   .then(user => {
     if (user) {

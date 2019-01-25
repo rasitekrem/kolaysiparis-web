@@ -1,6 +1,6 @@
 <template>
 <div class="container-fluid mr-0 mt-5 col-md-10 ">
-    <Day />
+    <Day :dayDetail="dayDetail"/>
     <Endofday />
     <Adition />
 </div>
@@ -16,7 +16,12 @@
             Day,
             Endofday,
             Adition
-        }
+        },
+        computed: {
+            dayDetail() {
+            return this.$store.getters.dayDetail
+            }
+        },
     }
 </script>
 

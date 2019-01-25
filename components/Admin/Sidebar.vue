@@ -1,6 +1,6 @@
 <template>
   <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-    <div class="sidebar-sticky">
+    <div class="sidebar-sticky ">
       <ul class="nav flex-column border-bottom">
         <nuxt-link class="nav-item border-bottom" active-class="active" to="/" tag="li"> 
           <a class="nav-link ">
