@@ -10,6 +10,10 @@
             <button type="button" id="new-category-button" class="btn btn-primary" @click.prevent="newCategory" :disabled="isInvalid"><fa class="mr-2" :icon="['fas', 'plus']"/> Yeni kategori</button>
             <button type="button" class="pull-right btn btn-success" :disabled="isInvalid" @click.prevent="save">Kaydet</button>
         </div>
+        <div class="d-flex justify-content-end mt-2" v-if="alert.show">
+            <div class="alert text-success" v-if="alert.status">Başarıyla Kaydedildi..</div>
+            <div class="alert text-danger" v-else>Kayıt Başarısız!</div>
+        </div>
     </div>
 </div>
 </template>
@@ -23,7 +27,11 @@ export default {
     data() {
         return {
             categories :  this.$store.getters.getCategories,
-            isInvalid: false
+            isInvalid: false,
+            alert : {
+                show : false,
+                status: true
+            }
         }
     },
     methods: {
@@ -48,13 +56,14 @@ export default {
                     })
                 }
             }
-            console.log(this.categories)
         },
         save() {
-            this.$store.dispatch("updatecategories", this.categories)
+            this.$store.dispatch("updateCategories", this.categories)
                 .then(response => {
-                    if (response.status) {
-                        this.$route.push("/")
+                    console.log(response)
+                    this.alert = {
+                        show : true,
+                        status : response
                     }
                 })
         },

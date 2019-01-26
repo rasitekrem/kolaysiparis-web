@@ -228,6 +228,28 @@ router.post('/removeproduct',(req,res) => {
         })
     })
 })
+router.post('/addcartnote',(req,res) => {
+  User.findById(req.decode.id)
+    .then(user => {
+      Cart.findOne({
+          restaurantId: user.restaurantId
+        })
+        .then(carts => {
+          if (carts) {
+            let itemIndex = carts.carts.findIndex(item => item.table == req.body.data.table);
+            if (itemIndex > -1) {
+                carts.carts[itemIndex].note = req.body.data.note
+            }
+            Cart.updateOne({ restaurantId: carts.restaurantId }, carts, (err) => { console.log(err) }); 
+          } else {
+            res.json({ carts })
+          }
+        })
+        .catch(err => {
+          res.json({ err })
+        })
+    })
+})
 router.post('/getcarts', (req,res) => {
     User.findById(req.decode.id)
     .then(user => {
@@ -260,6 +282,7 @@ router.post('/takingorder',(req,res) => {
                 table: req.body.data.table,
                 products: req.body.data.products,
                 totalPrice: req.body.data.totalPrice,
+                note: req.body.data.note ? req.body.data.note : '',
                 status: 'Sipariş Hazırlanıyor'
               }
             } else {
@@ -267,6 +290,7 @@ router.post('/takingorder',(req,res) => {
                 table: req.body.data.table,
                 products: req.body.data.products,
                 totalPrice: req.body.data.totalPrice,
+                note: req.body.data.note ? req.body.data.note : '',
                 status: 'Sipariş Hazırlanıyor'
               })
             }
@@ -279,6 +303,7 @@ router.post('/takingorder',(req,res) => {
                 table: req.body.data.table,
                 products: req.body.data.products,
                 totalPrice: req.body.data.totalPrice,
+                note: req.body.data.note ? req.body.data.note : '',
                 status: 'Sipariş Hazırlanıyor'
               }]
             })
@@ -488,6 +513,24 @@ router.post('/updatetables' , (req,res) => {
                   res.json({ status: false, tables: req.body.data.tables })
                 } else {
                   res.json({ status: true, tables: req.body.data.tables })
+                }
+              })
+          })
+    } 
+  })
+})
+router.post('/updatecategories',(req,res) => {
+  User.findById(req.decode.id)
+  .then(user => {
+    if (user) {
+        Restaurant.findById(user.restaurantId)
+          .then(restaurant => {
+              restaurant.categories = req.body.data.categories
+              restaurant.save((err) => {
+                if (err) {
+                  res.json({ status: false, categories: req.body.data.categories })
+                } else {
+                  res.json({ status: true, categories: req.body.data.categories })
                 }
               })
           })

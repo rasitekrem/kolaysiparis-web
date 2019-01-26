@@ -1,7 +1,7 @@
 <template>
     <div class="container mr-0 mt-5 col-md-10">
         <h3 class="text-center mt-3">{{ table }}</h3>
-        <div class="d-flex pt-3 justify-content-center" style="height: 100%">
+        <div class="d-flex pt-3 justify-content-center h-100" >
             <Categories v-if="!categoryName" @category="setCategory($event)" :categories="categories"/>
             <Products v-if="categoryName" :category="category" :table="table" @back="setCategory($event)"/>
             <Cart :cart="getCart" :table="table" @actionCart="actionCart($event)"/>

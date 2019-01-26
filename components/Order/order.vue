@@ -4,10 +4,12 @@
             <h3 class="card-title">{{ addition.table }}</h3>
         </div>
         <div class="card-body">
-            <div class="card-subtitle text-light">{{ addition.status }}</div>
+            <div class="card-subtitle text-light">{{ addition.status }} </div>
+            
             <ul class="list-group list-group-flush d-flex justify-content-center">
                 <li class="list-group-item card-text bg-light" v-for="(product,index) in addition.products" :key="index">{{ product.name }} <strong v-if="product.count>1">x{{product.count}}</strong></li>
             </ul>
+            <span class="text-light font-italic">{{ addition.note }}</span>
         </div>
         <div class="card-footer d-flex justify-content-center">
             <button @click="changeStatus('Sipariş Hazır')" class="btn btn-warning btn-block" v-if="addition.status === 'Sipariş Hazırlanıyor'">Hazır</button>
@@ -31,6 +33,9 @@
                 status: {
                     type: String,
                     required: true
+                },
+                note: {
+                    type: String,
                 }
             }
         },
