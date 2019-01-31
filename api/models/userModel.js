@@ -19,6 +19,14 @@ var UserSchema = new Schema({
   role: {
     type: String,
     default: "Admin"
+  },
+  authority: {
+    type: Object,
+    default: {
+      day: true,
+      cash: true,
+      order: true
+    }
   }
 });
 

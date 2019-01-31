@@ -11,54 +11,62 @@ const createStore = () => {
             tables: [],
             histories: [],
             restaurantInfo: {},
+            personals: [],
+            authority: {},
             step: null
         },
         mutations: {
-            setAuthKey(state,authKey) {
+            setAuthKey(state, authKey) {
                 state.authKey = authKey
             },
             clearAuthKey(state) {
                 Cookie.remove("authKey");
                 Cookie.remove("expiresIn");
                 if (process.client) {
-                 localStorage.removeItem("authKey")
-                 localStorage.removeItem("expiresIn")
+                    localStorage.removeItem("authKey")
+                    localStorage.removeItem("expiresIn")
                 }
                 state.authKey = null;
             },
-            setStep(state,step) {
+            setStep(state, step) {
                 state.step = step;
             },
-            setCategories(state,categories) {
+            setCategories(state, categories) {
                 state.categories = categories
             },
-            setCart(state,carts) {
+            setCart(state, carts) {
                 state.carts = carts;
             },
-            setOrders(state,orders) {
+            setOrders(state, orders) {
                 state.orders = orders
             },
-            setHistory(state,histories) {
+            setHistory(state, histories) {
                 state.histories = histories
             },
-            setRestaurantInfo(state,restaurantInfo) {
+            setRestaurantInfo(state, restaurantInfo) {
                 state.restaurantInfo = restaurantInfo
+            },
+            setPersonal(state,personal) {
+                state.personals.push(personal)
+            },
+            setAuthority(state,authority) {
+                state.authority = authority
             }
         },
         actions: {
-            nuxtServerInit(vuexContext,context){
+            nuxtServerInit(vuexContext, context) {
 
             },
             initAuth(vuexContext, req) {
                 let token;
                 let expiresIn;
-                if(req) {
+                if (req) {
                     // server side
                     if (!req.headers.cookie) {
-                        return 
+                        return
                     }
                     //cookie üzerinden token elde etmek
-                     token = req.headers.cookie.split(";").find(c => c.trim().startsWith("authKey="));
+                    token = req.headers.cookie.split(";").find(c => c.trim().startsWith("authKey="));
                     if (token) {
                         token = token.split("=")[1];
                     }
@@ -70,61 +78,61 @@ const createStore = () => {
                     // client üzerinde çalışıyoruz
                     token = localStorage.getItem("authKey");
                     expiresIn = localStorage.getItem("expiresIn");
-                    
+
                 }
-                if(new Date().getTime() > +expiresIn || !token){
+                if (new Date().getTime() > +expiresIn || !token) {
                     vuexContext.commit("clearAuthKey")
                 }
-                vuexContext.commit("setAuthKey",token)
+                vuexContext.commit("setAuthKey", token)
                 vuexContext.dispatch("checkRestaurantStep")
             },
-            login(vuexContext,authData) {
-                  return this.$axios.post('/authenticate', 
+            login(vuexContext, authData) {
+                return this.$axios.post('/authenticate',
                     { username: authData.user.email, password: authData.user.password })
-                      .then(response => {
-                          if (response.data.status) {
+                    .then(response => {
+                        if (response.data.status) {
                             Cookie.set("authKey", response.data.token);
                             let expiresIn = new Date().getTime() + +response.data.expiresIn * 60000
-                            Cookie.set("expiresIn",expiresIn);
-                            localStorage.setItem("authKey",response.data.token);
-                            localStorage.setItem("expiresIn",expiresIn);
-                            vuexContext.commit("setAuthKey",response.data.token)
-                            vuexContext.commit("setStep",response.data.step)
-                          }
+                            Cookie.set("expiresIn", expiresIn);
+                            localStorage.setItem("authKey", response.data.token);
+                            localStorage.setItem("expiresIn", expiresIn);
+                            vuexContext.commit("setAuthKey", response.data.token)
+                            vuexContext.commit("setStep", response.data.step)
+                        }
                         return response;
-                      })
+                    })
             },
-            register(vuexContext,authData) {
-                return this.$axios.post('/register', 
-                    { 
-                        username: authData.user.email, 
+            register(vuexContext, authData) {
+                return this.$axios.post('/register',
+                    {
+                        username: authData.user.email,
                         password: authData.user.password,
                         repassword: authData.user.repassword
                     })
-                      .then(response => {
-                          
-                          if (response.data.status) {
+                    .then(response => {
+
+                        if (response.data.status) {
                             Cookie.set("authKey", response.data.token);
                             let expiresIn = new Date().getTime() + +response.data.expiresIn * 60000
-                            Cookie.set("expiresIn",expiresIn);
-                            localStorage.setItem("authKey",response.data.token);
-                            localStorage.setItem("expiresIn",expiresIn);
-                            vuexContext.commit("setAuthKey",response.data.token)
-                          }
+                            Cookie.set("expiresIn", expiresIn);
+                            localStorage.setItem("authKey", response.data.token);
+                            localStorage.setItem("expiresIn", expiresIn);
+                            vuexContext.commit("setAuthKey", response.data.token)
+                        }
                         return response
-                      }) 
+                    })
             },
-            logout(vuexContext){
+            logout(vuexContext) {
                 return vuexContext.commit("clearAuthKey")
             },
-            checkUser(vuexContext,data) {
-                return this.$axios.post('/checkuser',{ data: { email: data.email } })
+            checkUser(vuexContext, data) {
+                return this.$axios.post('/checkuser', { data: { email: data.email } })
                     .then(response => {
                         return response
                     })
             },
-            saveStepOne(vuexContext,post) {
-                return this.$axios.post('/admin/saverestaurant',{ data: { post, token: vuexContext.state.authKey } })
+            saveStepOne(vuexContext, post) {
+                return this.$axios.post('/admin/saverestaurant', { data: { post, token: vuexContext.state.authKey } })
                     .then(response => {
                         if (response.status) {
                             vuexContext.state.step = 2;
@@ -132,14 +140,14 @@ const createStore = () => {
                         return response
                     })
             },
-            checkRestaurantStep(vuexContext){
-                return this.$axios.post("/admin/checkstatus",{ data: { token: vuexContext.state.authKey }})
+            checkRestaurantStep(vuexContext) {
+                return this.$axios.post("/admin/checkstatus", { data: { token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit("setStep",response.data.step)                       
+                        vuexContext.commit("setStep", response.data.step)
                     })
             },
-            saveStepTwo(vuexContext,post){
-                return this.$axios.put("/admin/updaterestaurant",{ data: { tables : post, token: vuexContext.state.authKey }})
+            saveStepTwo(vuexContext, post) {
+                return this.$axios.put("/admin/updaterestaurant", { data: { tables: post, token: vuexContext.state.authKey } })
                     .then(response => {
                         if (response.status) {
                             vuexContext.state.step = 3;
@@ -147,8 +155,8 @@ const createStore = () => {
                         return response;
                     })
             },
-            saveStepThree(vuexContext,post){
-                return this.$axios.put("/admin/updaterestaurant",{ data: { categories : post, token: vuexContext.state.authKey }})
+            saveStepThree(vuexContext, post) {
+                return this.$axios.put("/admin/updaterestaurant", { data: { categories: post, token: vuexContext.state.authKey } })
                     .then(response => {
                         if (response.status) {
                             vuexContext.state.step = 4;
@@ -157,36 +165,36 @@ const createStore = () => {
                     })
             },
             getTables(vuexContext) {
-                return this.$axios.post("/admin/gettables",{ data: { token: vuexContext.state.authKey }})
+                return this.$axios.post("/admin/gettables", { data: { token: vuexContext.state.authKey } })
                     .then(response => {
                         vuexContext.state.tables = response.data.tables
                         return response
                     })
             },
-            addToCart(vuexContext,data){
-                return this.$axios.post("/admin/addcart", { data : { product: data.product,table: data.table, token: vuexContext.state.authKey } })
+            addToCart(vuexContext, data) {
+                return this.$axios.post("/admin/addcart", { data: { product: data.product, table: data.table, token: vuexContext.state.authKey } })
                     .then(response => {
                         console.log(response)
                         vuexContext.dispatch("getCarts")
                         console.log(vuexContext.state.carts)
                     })
             },
-            changeCount(vuexContext,data){
-                return this.$axios.post("/admin/changecount", { data : { product: data.product,table: data.table, token: vuexContext.state.authKey } })
+            changeCount(vuexContext, data) {
+                return this.$axios.post("/admin/changecount", { data: { product: data.product, table: data.table, token: vuexContext.state.authKey } })
                     .then(response => {
                         console.log(response)
                         vuexContext.dispatch("getCarts")
                         console.log(vuexContext.state.carts)
                     })
             },
-            saveCartNote(vuexContext,data) {
-                return this.$axios.post("/admin/addcartnote", { data : { ...data, token: vuexContext.state.authKey } })
+            saveCartNote(vuexContext, data) {
+                return this.$axios.post("/admin/addcartnote", { data: { ...data, token: vuexContext.state.authKey } })
                     .then(response => {
                         vuexContext.dispatch("getCarts")
                     })
             },
-            removeProduct(vuexContext,data){
-                return this.$axios.post("/admin/removeproduct", { data : { product: data.product,table: data.table, token: vuexContext.state.authKey } })
+            removeProduct(vuexContext, data) {
+                return this.$axios.post("/admin/removeproduct", { data: { product: data.product, table: data.table, token: vuexContext.state.authKey } })
                     .then(response => {
                         console.log(response)
                         vuexContext.dispatch("getCarts")
@@ -194,104 +202,147 @@ const createStore = () => {
                     })
             },
             getCarts(vuexContext) {
-                return this.$axios.post("/admin/getcarts", { data : { token: vuexContext.state.authKey } })
+                return this.$axios.post("/admin/getcarts", { data: { token: vuexContext.state.authKey } })
                     .then(response => {
                         if (response.data.status) {
-                            vuexContext.commit("setCart",response.data.carts)
+                            vuexContext.commit("setCart", response.data.carts)
                         }
                     })
             },
             getCategories(vuexContext) {
-                return this.$axios.post('/admin/getcategories',{data : { token : vuexContext.state.authKey}})
+                return this.$axios.post('/admin/getcategories', { data: { token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit('setCategories',response.data.categories)
+                        vuexContext.commit('setCategories', response.data.categories)
                         return response
                     })
             },
-            takingOrder(vuexContext,data) {
-                return this.$axios.post('/admin/takingorder',{data : { ...data, token : vuexContext.state.authKey}})
+            takingOrder(vuexContext, data) {
+                return this.$axios.post('/admin/takingorder', { data: { ...data, token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit('setOrders',response.data.orders)
+                        vuexContext.commit('setOrders', response.data.orders)
                         return response
                     })
             },
             checkOrders(vuexContext) {
-                return this.$axios.post('/admin/checkorders',{data : { token : vuexContext.state.authKey}})
+                return this.$axios.post('/admin/checkorders', { data: { token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit('setOrders',response.data.orders)
+                        vuexContext.commit('setOrders', response.data.orders)
                         return response
                     })
             },
-            changeOrderStatus(vuexContext,data) {
-                return this.$axios.post('/admin/changeorderstatus',{data : { ...data, token : vuexContext.state.authKey}})
+            changeOrderStatus(vuexContext, data) {
+                return this.$axios.post('/admin/changeorderstatus', { data: { ...data, token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit('setOrders',response.data.orders)
+                        vuexContext.commit('setOrders', response.data.orders)
                         return response
                     })
             },
-            paid(vuexContext,data) {
-                return this.$axios.post('/admin/history',{data : { ...data, token : vuexContext.state.authKey}})
+            paid(vuexContext, data) {
+                return this.$axios.post('/admin/history', { data: { ...data, token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit('setHistory',response.data.histories)
+                        vuexContext.commit('setHistory', response.data.histories)
                         return response
                     })
             },
             checkHistory(vuexContext) {
-                return this.$axios.post('/admin/checkhistory',{data : { token : vuexContext.state.authKey}})
+                return this.$axios.post('/admin/checkhistory', { data: { token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit('setHistory',response.data.histories)
+                        vuexContext.commit('setHistory', response.data.histories)
                         return response
                     })
             },
-            closeAddition(vuexContext,data){
-                return this.$axios.post('/admin/closeaddition',{data : { ...data,token : vuexContext.state.authKey}})
+            closeAddition(vuexContext, data) {
+                return this.$axios.post('/admin/closeaddition', { data: { ...data, token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit('setOrders',response.data.orders)
-                        vuexContext.commit('setCart',response.data.carts)
+                        vuexContext.commit('setOrders', response.data.orders)
+                        vuexContext.commit('setCart', response.data.carts)
                         return response
                     })
             },
-            savePassword(vuexContext,data) {
-                return this.$axios.post('/admin/savepassword',{data : { ...data,token : vuexContext.state.authKey}})
+            savePassword(vuexContext, data) {
+                return this.$axios.post('/admin/savepassword', { data: { ...data, token: vuexContext.state.authKey } })
                     .then(response => {
                         return response
                     })
             },
             restaurantInfo(vuexContext) {
-                return this.$axios.post('/admin/restaurantinfo',{data : { token : vuexContext.state.authKey}})
+                return this.$axios.post('/admin/restaurantinfo', { data: { token: vuexContext.state.authKey } })
                     .then(response => {
                         console.log(response)
-                        vuexContext.commit('setRestaurantInfo',response.data.restaurantInfo)
+                        vuexContext.commit('setRestaurantInfo', response.data.restaurantInfo)
                     })
             },
-            saveRestaurant(vuexContext,data) {
-                return this.$axios.post('/admin/restaurantupdate',{data : { restaurantData : { ...data }, token : vuexContext.state.authKey}})
+            saveRestaurant(vuexContext, data) {
+                return this.$axios.post('/admin/restaurantupdate', { data: { restaurantData: { ...data }, token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit('setRestaurantInfo',response.data.restaurantInfo)
+                        vuexContext.commit('setRestaurantInfo', response.data.restaurantInfo)
                     })
             },
-            updateTables(vuexContext,data) {
-                return this.$axios.post('/admin/updatetables',{data : { tables : data, token : vuexContext.state.authKey}})
+            updateTables(vuexContext, data) {
+                return this.$axios.post('/admin/updatetables', { data: { tables: data, token: vuexContext.state.authKey } })
                     .then(response => {
                         vuexContext.state.tables = response.data.tables
                     })
             },
-            updateCategories(vuexContext,data) {
-                return this.$axios.post('/admin/updatecategories',{data : { categories : data, token : vuexContext.state.authKey}})
+            updateCategories(vuexContext, data) {
+                return this.$axios.post('/admin/updatecategories', { data: { categories: data, token: vuexContext.state.authKey } })
                     .then(response => {
-                        vuexContext.commit('setCategories',response.data.categories)
+                        vuexContext.commit('setCategories', response.data.categories)
                         return response.data.status
                     })
-            } 
+            },
+            dayStart(vuexContext) {
+                return this.$axios.post('/admin/daystart', { data: { token: vuexContext.state.authKey } })
+                    .then(response => {
+                        vuexContext.commit('setHistory', response.data.histories)
+                    })
+            },
+            endOfDay(vuexContext) {
+                return this.$axios.post('/admin/endofday', { data: { token: vuexContext.state.authKey } })
+                    .then(response => {
+                        vuexContext.commit('setHistory', response.data.histories)
+                    })
+            },
+            addPersonal(vuexContext,data) {
+                return this.$axios.post('/admin/addpersonal', { 
+                    data: { 
+                        username: data.email,
+                        password: data.password,
+                        authority: data.authority, 
+                        token: vuexContext.state.authKey 
+                    }})
+                    .then(response => {
+                        vuexContext.commit('setPersonal', response.data.personal)
+                    })
+            },
+            checkPersonal(vuexContext) {
+                return this.$axios.post('/admin/getpersonal', { data: { token: vuexContext.state.authKey }})
+                    .then(response => {
+                        vuexContext.state.personals = response.data.personals
+                    })
+            },
+            updatePersonal(vuexContext,data) {
+                return this.$axios.post('/admin/updatepersonal', { data: { personal: data, token: vuexContext.state.authKey }})
+                    .then(response => {
+                        vuexContext.dispatch('checkPersonal')
+                    })
+            },
+            checkAuthority(vuexContext) {
+                return this.$axios.post('/admin/getauthority', { data: { token: vuexContext.state.authKey }})
+                    .then(response => {
+                        console.log(response.data)
+                        vuexContext.commit('setAuthority',response.data.authority)
+                    })
+            }
         },
         getters: {
             isAuthenticated(state) {
-                return state.authKey != null 
+                return state.authKey != null
             },
             getToken(store) {
                 return store.authKey
             },
-            getRestaurantStatus(state){
+            getRestaurantStatus(state) {
                 return state.step <= 3;
             },
             getStep(state) {
@@ -300,87 +351,122 @@ const createStore = () => {
             getTables(state) {
                 return state.tables
             },
-            getCategories(state){
+            getCategories(state) {
                 return state.categories
             },
-            getCart(state){
+            getCart(state) {
                 return state.carts.carts
             },
             getOrders(state) {
                 return state.orders.orders
             },
             getHistory(state) {
-                return state.histories.history
+                if (state.histories.datas) {
+                    return state.histories.datas
+                } else {
+                    return []
+                }
+                
             },
-            dayDetail(state){
+            dayDetail(state,getters) {
                 let additionsPrice = 0
                 let waitOrderCount = 0
                 let notWaitCount = 0
-                 if (state.orders.orders) {
+                if (state.orders.orders) {
                     state.orders.orders.forEach((order) => {
                         if (order.status !== "Sipariş Teslim Edildi") {
-                           waitOrderCount++
+                            waitOrderCount++
                         } else {
-                           notWaitCount++
+                            notWaitCount++
                         }
                         additionsPrice += order.totalPrice
                     })
-                 }
-                 let historyPrice = 0
-                 let cashPrice = 0
-                 let creditPrice = 0
-                 let otherPrice = 0
-                 if (state.histories.histories) {
-                    state.histories.histories.forEach((history) => {
-                        if (history.payMethod="Nakit") {
-                            cashPrice+= history.totalPrice
-                        } else if(history.payMethod="Kredi") {
-                            creditPrice+= history.totalPrice
-                        } else {
-                            otherPrice+= history.totalPrice
+                }
+                let historyPrice = 0
+                let cashPrice = 0
+                let creditPrice = 0
+                let otherPrice = 0
+                let openTime = ''
+                let totalAdition = 0
+                if (state.histories.datas) {
+                    let toDay = getters.getToday
+                    let toDayHistory = state.histories.datas.filter(item => item.historyDate === toDay)
+                    if(toDayHistory[0]) {
+                        if (toDayHistory[0].histories) {
+                            toDayHistory[0].histories.forEach((history) => {
+                                if (history.payMethod === "Nakit") {
+                                    cashPrice += history.totalPrice
+                                } else if (history.payMethod === "Kredi") {
+                                    creditPrice += history.totalPrice
+                                } else {
+                                    otherPrice += history.totalPrice
+                                }
+                                historyPrice += history.totalPrice
+                            })
+                            totalAdition = toDayHistory[0].histories.length
                         }
-                        historyPrice+= history.totalPrice
-                    })
-                 }
-                 return {
-                     adition: {
+                        totalAdition += waitOrderCount + notWaitCount
+                        openTime = toDay + ' ' + toDayHistory[0].openTime
+                    }
+                }
+                return {
+                    openTime,
+                    adition: {
                         additionsPrice,
                         waitOrderCount,
-                        notWaitCount
-                     },
-                     history: {
+                        notWaitCount,
+                        totalAdition
+                    },
+                    history: {
                         historyPrice,
                         cashPrice,
                         creditPrice,
                         otherPrice
-                     }
-                 }
-                 
-            } ,
+                    }
+                }
+
+            },
             getChart(state) {
                 let totalTable = 0
                 state.tables.forEach(table => {
-                    totalTable+= +table.count
+                    totalTable += +table.count
                 })
                 let waitOrderCount = 0
                 let openCount = 0
-                 if (state.orders.orders) {
+                if (state.orders.orders) {
                     state.orders.orders.forEach((order) => {
                         if (order.status !== "Sipariş Teslim Edildi") {
-                           waitOrderCount++
-                        } 
-                        openCount ++
+                            waitOrderCount++
+                        }
+                        openCount++
                     })
-                 }
-                 console.log(totalTable)
-                 return {
+                }
+                console.log(totalTable)
+                return {
                     openCount,
                     waitOrderCount,
-                    emptyCount: totalTable-openCount
-                 }
+                    emptyCount: totalTable - openCount
+                }
             },
             getRestaurantInfo(state) {
                 return state.restaurantInfo
+            },
+            getToday() {
+                const date = new Date()
+                const year = date.getFullYear()
+                const day = date.getDate()
+                let month = date.getMonth() + 1
+                if (+month < 10) {
+                    month = '0' + month
+                }
+                const toDay = day + '/' + month + '/' + year
+                return toDay
+            },
+            getPersonal(state) {
+                return state.personals
+            },
+            getAuthority(state) {
+                return state.authority
             }
         }
     })

@@ -6,9 +6,7 @@ const User = require("../models/userModel");
 const Restaurant = require("../models/restaurantModel");
 
 router.post('/register', (req, res) => {
-  console.log(req.body)
   const {
-    restaurantName,
     username,
     password,
     repassword

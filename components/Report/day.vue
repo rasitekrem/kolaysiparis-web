@@ -3,7 +3,7 @@
             <div class="row">
                 <div class="col col-sm-25">
                     <h4 class="mb-0 card-title">Gün özeti</h4>
-                    <!-- <div class="small text-muted">Açılış: <span>10 Kas 2018 16:23</span></div> -->
+                 <div class="small text-muted">Açılış: <span>{{dayDetail.openTime }}</span></div>
                 </div>
                 <nuxt-link to="/day-report" class="d-none d-sm-inline-block col col-sm-35" tag="div" v-if="showDetail">
                     <a class="btn btn-primary float-right" >Ayrıntılar <i class="icon-arrow-right"></i></a>
@@ -46,6 +46,9 @@
 
 <script>
     export default {
+        beforeCreate() {
+            this.$store.dispatch('checkHistory')
+        },
         props: {
             showDetail:{
                 type: Boolean,

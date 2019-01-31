@@ -1,87 +1,107 @@
 <template>
-    <div class="container mr-0 mt-5 col-md-10">
-        <h3 class="text-center mt-3">{{ table }}</h3>
-        <div class="d-flex pt-3 justify-content-center h-100" >
-            <Categories v-if="!categoryName" @category="setCategory($event)" :categories="categories"/>
-            <Products v-if="categoryName" :category="category" :table="table" @back="setCategory($event)"/>
-            <Cart :cart="getCart" :table="table" @actionCart="actionCart($event)"/>
-        </div>
+<div class="container mr-0 mt-5 col-md-10" v-if="isAuthority">
+    <h3 class="text-center mt-3">{{ table }}</h3>
+    <div class="d-flex pt-3 justify-content-center h-100">
+        <Categories v-if="!categoryName" @category="setCategory($event)" :categories="categories" />
+        <Products v-if="categoryName" :category="category" :table="table" @back="setCategory($event)" />
+        <Cart :cart="getCart" :table="table" @actionCart="actionCart($event)" />
     </div>
+</div>
+<div class="container-fluid mr-0 mt-5 col-md-10 " v-else>
+    <NotAuth />
+</div>
 </template>
 
 <script>
-    import Products from '@/components/Product/Products';
-    import Cart from '@/components/Cart/Cart';
-    import Categories from '@/components/Category/Categories';
-    export default {
-        data() {
-            return {
-                isCategory : true,
-                categoryName: null
-            }
+import Products from '@/components/Product/Products';
+import Cart from '@/components/Cart/Cart';
+import Categories from '@/components/Category/Categories';
+import NotAuth from '@/components/Admin/NotAuth'
+export default {
+    data() {
+        return {
+            isCategory: true,
+            categoryName: null
+        }
+    },
+    components: {
+        Products,
+        Cart,
+        Categories,
+        NotAuth
+    },
+    beforeCreate() {
+        if (!this.$route.params.table) {
+            this.$router.push('/cashier')
+        }
+        this.table = this.$route.params.table
+    },
+    computed: {
+        categories() {
+            return this.$store.getters.getCategories
         },
-        components: {
-            Products,
-            Cart,
-            Categories
-        },
-        beforeCreate() {
-            if (!this.$route.params.table) {
-                this.$router.push('/cashier')
-            } 
-            this.table = this.$route.params.table
-        },
-        computed: {
-            categories() {
-                return this.$store.getters.getCategories
-            },
-            category() {
-                if (this.categoryName !== null) {
-                    let category = this.$store.getters.getCategories.filter((category) => {
-                        if(category.name === this.categoryName){ return true; }
-                    }); 
-                    return category[0]
-                }
-            },
-            getCart(){
-                let carts = this.$store.getters.getCart
-                let cart = { isEmpty : true }
-                if (carts) {
-                    carts.find(item => {
-                    if (item.table === this.table) {
-                        cart = item
-                         cart.isEmpty = false
+        category() {
+            if (this.categoryName !== null) {
+                let category = this.$store.getters.getCategories.filter((category) => {
+                    if (category.name === this.categoryName) {
+                        return true;
                     }
                 });
-                }
-                return cart
+                return category[0]
             }
         },
-        methods: {
-            setCategory(categoryName) {
-                this.categoryName = categoryName
-            },
-            actionCart(action) {
-                if (action === "takingOrder") {
-                    this.$store.dispatch("takingOrder",this.getCart)
-                } else if(action === "payOrder") {
-                    this.$router.push({ name: 'pay', params: { table: this.table }, props: true })
-                }
+        getCart() {
+            let carts = this.$store.getters.getCart
+            let cart = {
+                isEmpty: true
             }
+            if (carts) {
+                carts.find(item => {
+                    if (item.table === this.table) {
+                        cart = item
+                        cart.isEmpty = false
+                    }
+                });
+            }
+            return cart
         },
-    }
+        isAuthority() {
+            return this.$store.getters.getAuthority.cash
+        }
+    },
+    methods: {
+        setCategory(categoryName) {
+            this.categoryName = categoryName
+        },
+        actionCart(action) {
+            if (action === "takingOrder") {
+                this.$store.dispatch("takingOrder", this.getCart)
+            } else if (action === "payOrder") {
+                this.$router.push({
+                    name: 'pay',
+                    params: {
+                        table: this.table
+                    },
+                    props: true
+                })
+            }
+        }
+    },
+}
 </script>
 
 <style scoped>
-    .product-container, .cart-container {
-            padding: 1em;
-            flex: 1 !important;
-        }
-        .container {
-            height: 85vh;
-        }
-        body {
-            background-color: #FAF3DF;
-        }
+.product-container,
+.cart-container {
+    padding: 1em;
+    flex: 1 !important;
+}
 
+.container {
+    height: 85vh;
+}
+
+body {
+    background-color: #FAF3DF;
+}
 </style>

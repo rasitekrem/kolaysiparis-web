@@ -241,12 +241,13 @@ router.post('/addcartnote',(req,res) => {
                 carts.carts[itemIndex].note = req.body.data.note
             }
             Cart.updateOne({ restaurantId: carts.restaurantId }, carts, (err) => { console.log(err) }); 
-          } else {
             res.json({ carts })
+          } else {
+            res.json({ carts: [] })
           }
         })
         .catch(err => {
-          res.json({ err })
+          res.json({ carts: [] })
         })
     })
 })
@@ -341,7 +342,6 @@ router.post('/changeorderstatus',(req,res) => {
       Order.findOne({restaurantId : user.restaurantId})
         .then(order => {
           order.orders = req.body.data.additions
-          console.log(order)
           Order.updateOne({ restaurantId: order.restaurantId }, order, (err) => { console.log(err) });
           res.json({
             status: true,
@@ -352,45 +352,46 @@ router.post('/changeorderstatus',(req,res) => {
     })
 })
 router.post('/history', (req, res) => {
+  const date = new Date()
+  const year = date.getFullYear()
+  const day = date.getDate()
+  let month = date.getMonth() + 1
+  if (month < 10) {
+      month = '0' + month
+  }
+  const toDay = day + '/' + month + '/' + year
+
   User.findById(req.decode.id)
   .then(user => {
     Histories.findOne({restaurantId : user.restaurantId})
-      .then(histories => {
-        if (histories) {
-          if (histories.histories.length > 0) {
-            histories.histories.push({
-                table: req.body.data.table,
-                products: req.body.data.products,
-                totalPrice: req.body.data.totalPrice,
-                payMethod: req.body.data.payMethod,
-                date: new Date().getTime()
-            })
-          } else {
-            histories.histories = [{
-              table: req.body.data.table,
-              products: req.body.data.products,
-              totalPrice: req.body.data.totalPrice,
-              payMethod: req.body.data.payMethod,
-              date: new Date().getTime()
-          }]
+      .then(result => {
+        if (result) {
+          if (result.datas.length > 0) {
+              let toDayIndex = result.datas.findIndex(item => item.historyDate === toDay)
+              if(toDayIndex > -1) {
+                if (result.datas[toDayIndex].histories) {
+                  result.datas[toDayIndex].histories.push({
+                    table: req.body.data.table,
+                    products: req.body.data.products,
+                    totalPrice: req.body.data.totalPrice,
+                    payMethod: req.body.data.payMethod,
+                    date: new Date().getTime()
+                 })
+                } else {
+                  result.datas[toDayIndex].histories = [{
+                    table: req.body.data.table,
+                    products: req.body.data.products,
+                    totalPrice: req.body.data.totalPrice,
+                    payMethod: req.body.data.payMethod,
+                    date: new Date().getTime()
+                }]
+                }
+              Histories.updateOne({ restaurantId: result.restaurantId }, result, (err) => { console.log(err) });
+              }  
           }
-          Histories.updateOne({ restaurantId: histories.restaurantId }, histories, (err) => { console.log(err) });
-          res.json({ histories })
+          res.json({ histories: result })
         } else {
-          let newHistory = new Histories({
-            restaurantId: user.restaurantId,
-            histories: [
-              {
-                table: req.body.data.table,
-                products: req.body.data.products,
-                totalPrice: req.body.data.totalPrice,
-                payMethod: req.body.data.payMethod,
-                date: new Date().getTime()
-              }
-            ]
-            })
-            newHistory.save()
-            res.json({histories: newHistory}) 
+          res.json({ histories: [] })
         }
         
       })
@@ -410,6 +411,105 @@ router.post('/checkhistory',(req,res) => {
         })
         .catch(err => res.json({status: false,histories : [] }))
     })
+})
+router.post('/daystart', (req,res) => {
+  const date = new Date()
+  let hour = date.getHours()
+  let minute = date.getMinutes()
+  const year = date.getFullYear()
+  const day = date.getDate()
+  let month = date.getMonth() + 1
+  let time = ''
+  if (month < 10) {
+      month = '0' + month
+  }
+  if (hour < 10 && minute < 10) {
+    time = '0' + hour + ':0' + minute
+  } else if(hour < 10){
+    time = '0' + hour + ':' + minute
+  } else {
+    time = hour + ':0' + minute
+  }
+  const toDay = day + '/' + month + '/' + year
+  User.findById(req.decode.id)
+  .then(user => {
+    Histories.findOne({restaurantId : user.restaurantId})
+      .then(result => {
+        if (result) {
+          if (result.datas.length > 0) {
+              let toDayIndex = result.datas.findIndex(item => item.historyDate === toDay)
+              if(toDayIndex > -1) {
+                result.datas[toDayIndex].isOpen = true
+              } else {
+                result.datas.push({
+                  historyDate : toDay,
+                  openTime: time,
+                  isOpen: true
+                })
+              } 
+          } else {
+            result.datas = [{
+              historyDate : toDay,
+                openTime: time,
+                isOpen: true
+            }]
+          }
+          Histories.updateOne({ restaurantId: result.restaurantId }, result, (err) => { console.log(err) });
+          res.json({ histories: result })
+        } else {
+          let newHistory = new Histories({
+            restaurantId: user.restaurantId,
+            datas: [{
+                historyDate : toDay,
+                openTime: time,
+                isOpen: true
+            }]
+          })
+          newHistory.save()
+          res.json({ histories: newHistory })
+        }
+        
+      })
+      .catch(err => res.json({status: false,histories : [] }))
+  })
+})
+router.post('/endofday', (req,res) => {
+  const date = new Date()
+  let hour = date.getHours()
+  let minute = date.getMinutes()
+  const year = date.getFullYear()
+  const day = date.getDate()
+  let month = date.getMonth() + 1
+  let time = ''
+  if (month < 10) {
+      month = '0' + month
+  }
+  if (hour < 10 && minute < 10) {
+    time = '0' + hour + ':0' + minute
+  } else if(hour < 10){
+    time = '0' + hour + ':' + minute
+  } else {
+    time = hour + ':0' + minute
+  }
+  const toDay = day + '/' + month + '/' + year
+  User.findById(req.decode.id)
+  .then(user => {
+    Histories.findOne({restaurantId : user.restaurantId})
+      .then(result => {
+        if (result) {
+          if (result.datas.length > 0) {
+              let toDayIndex = result.datas.findIndex(item => item.historyDate === toDay)
+              if(toDayIndex > -1) {
+                result.datas[toDayIndex].isOpen = false
+                result.datas[toDayIndex].closeTime = time
+              } 
+              Histories.updateOne({ restaurantId: result.restaurantId }, result, (err) => { console.log(err) });
+          } 
+          res.json({ histories: result })
+        } 
+      })
+      .catch(err => res.json({status: false,histories : [] }))
+  })
 })
 router.post('/closeaddition',(req,res) => {
   User.findById(req.decode.id)
@@ -445,8 +545,6 @@ router.post('/savepassword',(req,res) => {
       })
     } else {
       bcrypt.compare(oldPassword, user.password).then((result) => {
-        console.log(user.password)
-        console.log(result)
         if (result) {
           bcrypt.hash(newPassword, 10).then((newhash) => {
             user.password = newhash
@@ -480,7 +578,6 @@ router.post('/restaurantinfo',(req,res) => {
     if (user) {
         Restaurant.findById(user.restaurantId)
           .then(restaurant => {
-            console.log(restaurant)
               if(restaurant) {
                 res.json({ restaurantInfo : restaurant })
               } else {
@@ -536,5 +633,77 @@ router.post('/updatecategories',(req,res) => {
           })
     } 
   })
+})
+router.post('/addpersonal',(req,res) => {
+  const {
+    username,
+    password,
+    authority
+  } = req.body.data;
+  User.findById(req.decode.id)
+  .then(user => {
+    bcrypt.hash(password, 10).then((hash) => {
+      const personal = new User({
+        username,
+        password: hash,
+        authority,
+        role: 'Personal',
+        restaurantId: user.restaurantId,
+      });
+      const promise = personal.save();
+      promise.then((data) => {
+        res.json({ personal: data })
+      }).catch((err) => {
+        res.json({
+          status: false,
+          message: err.message
+        })
+      })
+    })
+  })
+})
+router.post('/getpersonal',(req,res) => {
+  User.findById(req.decode.id)
+  .then(user => {
+    User.find({ restaurantId: user.restaurantId, role: 'Personal'})
+      .then(personals => {
+        if (personals) {
+          res.json({ personals })
+        } else {
+          res.json({ personals: [] })
+        }
+      })
+      .catch(err => res.json({ personals: [] }))
+  })
+  .catch(err => res.json({ personals: [] }))
+})
+router.post('/updatepersonal',(req,res) => {
+  let personal = req.body.data.personal
+  
+  bcrypt.hash(personal.password, 10).then((hash) => {
+    personal.password = hash
+    User.findByIdAndUpdate(personal._id,personal, { new: true },(err,model) => {
+      if (err) {
+        res.json({ status: false })
+      } else {
+        res.json({ status: true })
+      }
+    })
+    .catch(err => {
+      console.log(err.message)
+      res.json({ status: false })
+    })
+  })
+})
+router.post('/getauthority',(req,res) => {
+  User.findById(req.decode.id)
+  .then(user => {
+    if(user) {
+      res.json({ authority: { ...user.authority, role: user.role } })
+    } else {
+      res.json({ authority: {}})
+    }
+  })
+  .catch(err => res.json({ authority: {}}))
 })
 module.exports = router;

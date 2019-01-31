@@ -7,7 +7,7 @@ var HistorySchema = new Schema({
     unique: true,
     required: true
   },
-  histories: {
+  datas: {
     type: Array,
     required: false
   }

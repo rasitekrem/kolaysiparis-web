@@ -3,7 +3,7 @@
     <Header />
     <div class="app-body">
       <div class="row">
-        <Sidebar />
+        <Sidebar :authority="authority"/>
       </div>
       <transition name="layout" mode="out-in">
         <nuxt />
@@ -16,11 +16,16 @@
   import Header from '@/components/Admin/Header'
   import Sidebar from '@/components/Admin/Sidebar'
   export default {
-    middleware: ["session-control","auth","step","ordercheck","payment","gettables","checkhistory"],
+    middleware: ["session-control","auth","step","checkauthority","ordercheck","payment","gettables","checkhistory","checkpersonal"],
     components: {
       Sidebar,
       Header,
-    }
+    },
+    computed: {
+      authority() {
+        return this.$store.getters.getAuthority
+      }
+    },
   }
 </script>
 

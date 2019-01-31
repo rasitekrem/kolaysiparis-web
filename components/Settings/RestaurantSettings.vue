@@ -1,7 +1,8 @@
 <template>
 <div class="card border-primary mt-2">
     <div class="card-header">Restoran Ayarları</div>
-    <div class="card-body d-flex col-sm-6 flex-column">
+    <Warning v-if="getHistories" />
+    <div class="card-body d-flex col-sm-6 flex-column" v-else>
         <h4 class="card-title">Restoran Bilgilerini Düzenle</h4>
         <div class="form-group">
             <label>Restoran Adınız</label>
@@ -81,7 +82,11 @@ import {
     maxLength,
     sameAs
 } from "vuelidate/lib/validators";
+import Warning from '@/components/Settings/Warning'
 export default {
+    components: {
+        Warning
+    },
     props: {
         restaurantInfo: {
             type: Object,
@@ -107,6 +112,23 @@ export default {
     methods: {
         save() {
             this.$emit('saveRestaurant',this.restaurantInfo)
+        }
+    },
+    computed: {
+        getHistories() {
+            let today = this.$store.getters.getToday
+            let histories = this.$store.getters.getHistory
+            if (histories) {
+                let historyIndex = histories.findIndex(item => item.historyDate === today)
+                if (historyIndex > -1) {
+                    if (histories[historyIndex].isOpen) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            } else
+                return false
         }
     },
 }
