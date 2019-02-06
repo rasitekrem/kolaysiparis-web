@@ -678,8 +678,7 @@ router.post('/getpersonal',(req,res) => {
   .catch(err => res.json({ personals: [] }))
 })
 router.post('/updatepersonal',(req,res) => {
-  let personal = req.body.data.personal
-  
+  let personal = req.body.data.personal 
   bcrypt.hash(personal.password, 10).then((hash) => {
     personal.password = hash
     User.findByIdAndUpdate(personal._id,personal, { new: true },(err,model) => {
@@ -690,10 +689,15 @@ router.post('/updatepersonal',(req,res) => {
       }
     })
     .catch(err => {
-      console.log(err.message)
       res.json({ status: false })
     })
   })
+})
+router.post('/removepersonal',(req,res) => {
+  User.findByIdAndDelete(req.body.data.id,(err,result) => {
+    res.json({ status: true})
+  })
+  .catch(err => res.json({ status: false }))
 })
 router.post('/getauthority',(req,res) => {
   User.findById(req.decode.id)

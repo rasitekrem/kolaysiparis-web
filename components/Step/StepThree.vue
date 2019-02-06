@@ -49,7 +49,7 @@
                 this.$store.dispatch("saveStepThree",this.categories)
                     .then(response => {
                         if (response.status) {
-                            this.$route.push("/")
+                            this.$router.push("/")
                         }
                     })
             }

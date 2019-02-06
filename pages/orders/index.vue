@@ -27,6 +27,21 @@ export default {
         },
         isAuthority() {
             return this.$store.getters.getAuthority.order
+        },
+        getHistories() {
+            let today = this.$store.getters.getToday
+            let histories = this.$store.getters.getHistory
+            if (histories) {
+                let historyIndex = histories.findIndex(item => item.historyDate === today)
+                if (historyIndex > -1) {
+                    if (histories[historyIndex].isOpen) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            } else
+                return false
         }
     },
     methods: {

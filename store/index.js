@@ -327,6 +327,12 @@ const createStore = () => {
                         vuexContext.dispatch('checkPersonal')
                     })
             },
+            removePersonal(vuexContext,id) {
+                return this.$axios.post('/admin/removepersonal', { data: { id, token: vuexContext.state.authKey }})
+                    .then(response => {
+                        vuexContext.dispatch('checkPersonal')
+                    })
+            },
             checkAuthority(vuexContext) {
                 return this.$axios.post('/admin/getauthority', { data: { token: vuexContext.state.authKey }})
                     .then(response => {
