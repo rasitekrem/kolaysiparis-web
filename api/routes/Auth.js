@@ -48,6 +48,7 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/authenticate', (req, res) => {
+  console.log(req.body)
   const {
     username,
     password
@@ -116,10 +117,12 @@ router.post('/authenticate', (req, res) => {
 
 
 router.post('/checkuser', (req, res) => {
+  console.log(req.body.data.email)
   User.find({
       username: req.body.data.email
     })
     .then(user => {
+      console.log(user)
       if (user.length == 0) {
         res.status(200).json({
           status: 'ok'

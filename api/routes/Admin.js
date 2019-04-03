@@ -7,6 +7,8 @@ const User = require('../models/userModel');
 const Cart = require('../models/cartModel');
 const Order = require('../models/orderModel');
 const Histories = require('../models/historyModel');
+const qr = require('qr-image');
+const fs = require('fs');
 
 router.post('/saverestaurant', (req, res) => {
   const {
@@ -709,5 +711,49 @@ router.post('/getauthority',(req,res) => {
     }
   })
   .catch(err => res.json({ authority: {}}))
+})
+router.post('/qrcodesdownload',(req,res) => {
+  const tables = req.body.data.tables
+  console.log(tables)
+  User.findById(req.decode.id)
+    .then(user => {
+      let restaurant_id = user.restaurantId
+      if (!fs.existsSync('./qrcodes')){
+        fs.mkdirSync('./qrcodes');
+    }
+    var zipFolder = require('zip-folder');
+    if (!fs.existsSync('./downloads')){
+        fs.mkdirSync('./downloads');
+    }
+    if (!fs.existsSync('./qrcodes/restaurant'+restaurant_id)){
+      fs.mkdirSync('./qrcodes/restaurant'+restaurant_id);
+    } 
+    
+    var qr_svg = []
+    let arrayIndex = 0
+    tables.forEach(function(element) {
+      for (let index = 1; index <= element.count; index++) {
+        qr_svg.push(qr.image(restaurant_id + ',' + element['name'] + ' ' + index, { type: 'png' }))
+        qr_svg[arrayIndex].pipe(require('fs').createWriteStream('./qrcodes/restaurant'+restaurant_id + '/' + element['name'] + ' ' + index + '.png'));
+        arrayIndex++
+      }
+    });
+    // qr_svg.forEach((image, index) => {
+    //     image.pipe(require('fs').createWriteStream('./qrcodes/restaurant'+restaurant_id +'/Masalar' + index + '.png'));
+    //     console.log(image)
+    // })
+    
+    zipFolder('./qrcodes/restaurant' + restaurant_id,'./downloads/restaurant'+ restaurant_id +'.zip', function(err) {
+        if(err) {
+            console.log('burda')
+            res.send({ message: err.message })
+        } else {
+          res.download('./downloads/restaurant'+ restaurant_id +'.zip')
+        }
+    });
+    })
+})
+router.post('/test',(req,res) => {
+  res.download('./api/qrcodes/restaurant5c3203286384bd08ef18f8cb/Masalar0.png')
 })
 module.exports = router;

@@ -4,6 +4,12 @@
   "description": "Kolay Siparis Uygulamasinin Front end ve rest api kismi",
   "author": "rasitekrem",
   "private": true,
+  "config": {
+    "nuxt": {
+      "host": "0.0.0.0",
+      "port": "3000"
+    }
+  },
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
@@ -19,12 +25,18 @@
     "cross-env": "^5.2.0",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
+    "express-zip": "^2.0.1",
+    "fs": "0.0.1-security",
     "js-cookie": "^2.2.0",
+    "js-file-download": "^0.4.5",
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.3.13",
     "nuxt": "^2.0.0",
     "nuxt-fontawesome": "^0.3.0",
-    "vuelidate": "^0.7.4"
+    "path": "^0.12.7",
+    "qr-image": "^3.2.0",
+    "vuelidate": "^0.7.4",
+    "zip-folder": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

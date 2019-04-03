@@ -3,8 +3,15 @@
     <Table v-for="(table,index) in tables" :key="index" :index="index" :table="table" @addTable="add($event)" @remove="remove($event)" />
     <a @click.prevent="tables.push({ name :null, count : null})" class="btn btn-block" v-if="tables.length == tableCount && !this.isInvalid">
                     <fa class="mr-2" :icon="['fas', 'plus']" />
-                </a>
-    <button @click.prevent="save" class="mr-2 btn btn-success" :disabled="this.isInvalid">Kaydet</button>
+    </a>
+    <div class="d-flex justify-content-between">
+        <button @click.prevent="save" class="mr-2 btn btn-success" :disabled="this.isInvalid">Kaydet</button>
+        <button @click.prevent="qrdownload" class="mr-2 btn btn-danger" >Qr Code indir</button>
+        <button @click.prevent="test" class="btn btn-primary" type="button" :disabled="this.isInvalid">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Hazırlanıyor...
+        </button>
+    </div>
 </div>
 </template>
 
@@ -20,7 +27,8 @@ export default {
     data() {
         return {
             tableCount: this.tables.length,
-            isInvalid: false
+            isInvalid: false,
+            isDownloading: false
         }
     },
     components: {
@@ -52,6 +60,12 @@ export default {
             this.tables.splice(index, 1);
             this.tableCount = this.tables.length
             console.log(this.tables)
+        },
+        qrdownload() {
+            this.$store.dispatch("qrCodesDownload")
+        },
+        test() {
+            this.$store.dispatch("test")
         }
     },
 }

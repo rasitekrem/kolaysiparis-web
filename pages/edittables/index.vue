@@ -3,6 +3,7 @@
     <div class="mt-5 container">
         <div class="mb-5 ">
             <h2 class="text-center mb-2">Masaları Düzenle</h2>
+            <input type="button" value="QR Code İndir">
             <hr>
             <Warning v-if="getHistories" />
             <EditPage :tables="$store.getters.getTables" @updateTables="$store.dispatch('updateTables',$event)" v-else />
