@@ -115,6 +115,51 @@ router.post('/authenticate', (req, res) => {
   })
 });
 
+router.post('/mobileauth', (req, res) => {
+  console.log(req.body)
+  const {
+    username,
+    password
+  } = req.body;
+  User.findOne({
+    username
+  }, (err, user) => {
+    if (err) {
+      res.json(({
+        status: false,
+        message: err.message
+      }))
+    }
+    if (!user) {
+      res.json({
+        status: false,
+        message: "Kullanıcı bulunamadı"
+      })
+    } else {
+      bcrypt.compare(password, user.password).then((result) => {
+        if (!result) {
+          res.json({
+            status: false,
+            message: "Parola hatalı"
+          })
+        } else {
+          const payload = {
+            id: user._id
+          }
+          const token = jwt.sign(payload, req.app.get('api_secret_key'), {
+            expiresIn: 43200
+          })
+          res.json({
+            status: true,
+            token,
+            expiresIn: 43200,
+            id: user._id
+          });
+        }
+      })
+    }
+  })
+});
 
 router.post('/checkuser', (req, res) => {
   console.log(req.body.data.email)

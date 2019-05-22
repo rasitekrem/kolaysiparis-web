@@ -7,10 +7,6 @@
     <div class="d-flex justify-content-between">
         <button @click.prevent="save" class="mr-2 btn btn-success" :disabled="this.isInvalid">Kaydet</button>
         <button @click.prevent="qrdownload" class="mr-2 btn btn-danger" >Qr Code indir</button>
-        <button @click.prevent="test" class="btn btn-primary" type="button" :disabled="this.isInvalid">
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            Hazırlanıyor...
-        </button>
     </div>
 </div>
 </template>

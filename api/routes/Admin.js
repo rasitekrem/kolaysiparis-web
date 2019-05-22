@@ -533,6 +533,7 @@ router.post('/closeaddition',(req,res) => {
     })
 })
 router.post('/savepassword',(req,res) => {
+  console.log(req.body.data);
   const {
     newPassword,
     renewPassword,

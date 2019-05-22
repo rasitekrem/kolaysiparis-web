@@ -172,6 +172,7 @@ const createStore = () => {
                     })
             },
             addToCart(vuexContext, data) {
+                console.log(data)
                 return this.$axios.post("/admin/addcart", { data: { product: data.product, table: data.table, token: vuexContext.state.authKey } })
                     .then(response => {
                         console.log(response)

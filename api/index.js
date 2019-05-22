@@ -3,9 +3,10 @@ const express = require('express');
 const app = express();
 const configDB = require('./config/database');
 const config = require('./config/config');
-const auth = require('./routes/Auth')
-const admin = require('./routes/Admin')
-const verifyToken = require('./middleware/verifytoken')
+const auth = require('./routes/Auth');
+const admin = require('./routes/Admin');
+const users = require('./routes/Users');
+const verifyToken = require('./middleware/verifytoken');
 
 mongoose.connect(configDB.database,{ useNewUrlParser: true })
 
@@ -25,6 +26,8 @@ app.use((req, res, next) => {
 app.set('api_secret_key',config.api_secret_key);
 app.use('/admin',verifyToken)
 app.use('/admin',admin)
+app.use('/user',verifyToken)
+app.use('/user',users)
 app.use('/',auth);
 
 module.exports = {
