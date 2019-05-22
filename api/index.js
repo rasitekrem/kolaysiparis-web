@@ -22,7 +22,13 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   next();
 });
-
+app.use((req, res, next) => {
+  res.append('Access-Control-Allow-Origin' , '*');
+  res.append('Access-Control-Allow-Methods', '*');
+  res.append("Access-Control-Allow-Headers", "Origin, Accept,Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+  res.append('Access-Control-Allow-Credentials', true);
+  next();
+});
 app.set('api_secret_key',config.api_secret_key);
 app.use('/admin',verifyToken)
 app.use('/admin',admin)
