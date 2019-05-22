@@ -115,7 +115,7 @@ export default {
                         return true
                     } else {
                         if (value) {
-                            return axios.post('/api/checkuser', {
+                            return axios.post('/checkuser', {
                                     data: {
                                         email: value
                                     }

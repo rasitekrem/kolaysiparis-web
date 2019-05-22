@@ -91,7 +91,7 @@
                     email,
                     uniq : (value) => {
                         if (value) {
-                            return axios.post('/api/checkuser',{ data: { email: value } })
+                            return axios.post('/checkuser',{ data: { email: value } })
                                 .then(response => {
                                     if (response.data.status === "ok") {
                                         return true
