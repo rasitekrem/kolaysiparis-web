@@ -343,19 +343,15 @@ const createStore = () => {
             },
             qrCodesDownload(vuexContext) {
                 const FileDownload = require('js-file-download');
-                return this.$axios.post('/admin/qrcodesdownload',{ data: { token: vuexContext.state.authKey, tables: vuexContext.state.tables }, responseType: 'arraybuffer',
+                return this.$axios.post('/admin/qrcodesdownload',{ data: { token: vuexContext.state.authKey, tables: vuexContext.state.tables }, responseType: 'blob',
                 headers: {
                   'Accept': 'application/zip'
                 } })
                     .then(response => {
-                        console.log(response)
-                        const blob = new Blob([response.data], {type: "application/zip"});
-                        const objectUrl = URL.createObjectURL(blob);
-                        window.open(objectUrl);
-                        //FileDownload(blob,'qrcode1.zip')
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
                         const link = document.createElement('a');
-                        link.href = objectUrl;
-                        link.setAttribute('download', 'file.zip');
+                        link.href = url;
+                        link.setAttribute('download', 'qrcodes.zip');
                         document.body.appendChild(link);
                         link.click();
                     })
